@@ -1,20 +1,29 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.ar.sceneform.plugin'
 
 android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "pl.lodz.p.interiordesignapp"
-        minSdkVersion 28
+        minSdkVersion 24
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        compileOptions {
+            sourceCompatibility 1.8
+            targetCompatibility 1.8
+        }
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+    compileOptions {
+        sourceCompatibility = '1.8'
+        targetCompatibility = '1.8'
     }
 }
 
@@ -31,4 +40,11 @@ dependencies {
     implementation 'com.google.ar.sceneform:core:1.6.0'
     // Provides ARCore Session and related resources.
     implementation 'com.google.ar:core:1.6.0'
+    implementation 'com.android.support:design:28.0.0'
 }
+
+
+sceneform.asset('sampledata/chestofdrawer/drawer.fbx',
+        'default',
+        'sampledata/chestofdrawer/drawer.sfa',
+        'src/main/assets/drawer')
