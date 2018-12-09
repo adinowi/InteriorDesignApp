@@ -1,11 +1,13 @@
-package pl.lodz.p.interiordesignapp;
+package pl.lodz.p.interiordesignapp.controller;
 
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Build.VERSION_CODES;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,12 +23,18 @@ import com.google.ar.sceneform.rendering.ModelRenderable;
 import com.google.ar.sceneform.ux.ArFragment;
 import com.google.ar.sceneform.ux.TransformableNode;
 
+import pl.lodz.p.interiordesignapp.R;
+import pl.lodz.p.interiordesignapp.model.ArFragmentManager;
+
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final double MIN_OPENGL_VERSION = 3.0;
 
     private ArFragment arFragment;
     private ModelRenderable modelRenderable;
+    private ArFragmentManager arFragmentManager;
+    private FloatingActionButton modelChooseButton;
+
 
     @Override
     @SuppressWarnings({"AndroidApiChecker", "FutureReturnValueIgnored"})
@@ -37,8 +45,14 @@ public class MainActivity extends AppCompatActivity {
         }
 
         setContentView(R.layout.activity_main);
-        arFragment = (ArFragment) getSupportFragmentManager().findFragmentById(R.id.ux_fragment);
+        arFragmentManager = ArFragmentManager.getInstance((ArFragment) getSupportFragmentManager().findFragmentById(R.id.ux_fragment));
+        arFragment = arFragmentManager.getArFragment();
 
+        modelChooseButton = (FloatingActionButton) findViewById(R.id.modelChooseButton);
+        modelChooseButton.setOnClickListener(view -> {
+            Intent intent = new Intent(this, ModelSelectionActivity.class);
+            startActivity(intent);
+        });
         // When you build a Renderable, Sceneform loads its resources in the background while returning
         // a CompletableFuture. Call thenAccept(), handle(), or check isDone() before calling get().
         ModelRenderable.builder()
