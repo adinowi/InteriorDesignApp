@@ -49,3 +49,9 @@ sceneform.asset('sampledata/chestofdrawer/drawer.fbx',
         'default',
         'sampledata/chestofdrawer/drawer.sfa',
         'src/main/assets/models/drawer')
+
+
+sceneform.asset('sampledata/table/table.fbx',
+        'default',
+        'sampledata/table/table.sfa',
+        'src/main/assets/models/table')

@@ -2,15 +2,20 @@ package pl.lodz.p.interiordesignapp.adapter;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.List;
 
 import pl.lodz.p.interiordesignapp.R;
+import pl.lodz.p.interiordesignapp.controller.MainActivity;
+import pl.lodz.p.interiordesignapp.controller.ModelSelectionActivity;
+import pl.lodz.p.interiordesignapp.model.ArFragmentManager;
 
 public class ModelAdapter extends RecyclerView.Adapter<ModelAdapter.ModelViewHolder> {
     private List<String> models;
@@ -41,6 +46,9 @@ public class ModelAdapter extends RecyclerView.Adapter<ModelAdapter.ModelViewHol
             final String modelName = models.get(position);
             if (modelName != null) {
                 holder.modelNameTextView.setText(modelName);
+                holder.setButton.setOnClickListener(view -> {
+                    ArFragmentManager.getInstance(null).setName(modelName);
+                });
             }
         }
 
@@ -58,9 +66,11 @@ public class ModelAdapter extends RecyclerView.Adapter<ModelAdapter.ModelViewHol
     public static class ModelViewHolder extends RecyclerView.ViewHolder {
         // each data item is just a string in this case
         public TextView modelNameTextView;
+        public Button setButton;
         public ModelViewHolder(View view) {
             super(view);
-           modelNameTextView = view.findViewById(R.id.modelNameTextView);
+            modelNameTextView = view.findViewById(R.id.modelNameTextView);
+            setButton = view.findViewById(R.id.setButton);
         }
     }
 }
