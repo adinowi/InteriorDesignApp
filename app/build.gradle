@@ -41,10 +41,11 @@ dependencies {
     // Provides ARCore Session and related resources.
     implementation 'com.google.ar:core:1.6.0'
     implementation 'com.android.support:design:28.0.0'
+    implementation 'com.android.support:recyclerview-v7:28.0.0'
 }
 
 
 sceneform.asset('sampledata/chestofdrawer/drawer.fbx',
         'default',
         'sampledata/chestofdrawer/drawer.sfa',
-        'src/main/assets/drawer')
+        'src/main/assets/models/drawer')
