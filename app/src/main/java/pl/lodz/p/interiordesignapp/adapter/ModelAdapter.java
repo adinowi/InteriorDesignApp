@@ -47,7 +47,7 @@ public class ModelAdapter extends RecyclerView.Adapter<ModelAdapter.ModelViewHol
             if (modelName != null) {
                 holder.modelNameTextView.setText(modelName);
                 holder.setButton.setOnClickListener(view -> {
-                    ArFragmentManager.getInstance(null).setName(modelName);
+                    ArFragmentManager.getInstance().setName(modelName);
                 });
             }
         }

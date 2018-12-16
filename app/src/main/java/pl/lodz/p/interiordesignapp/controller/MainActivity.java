@@ -4,10 +4,16 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Build.VERSION_CODES;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,6 +21,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.ar.core.Anchor;
@@ -31,20 +38,19 @@ import java.util.concurrent.CompletableFuture;
 
 import pl.lodz.p.interiordesignapp.R;
 import pl.lodz.p.interiordesignapp.adapter.ModelAdapter;
+import pl.lodz.p.interiordesignapp.fragment.BlankFragment;
+import pl.lodz.p.interiordesignapp.fragment.ModelSelectionFragment;
 import pl.lodz.p.interiordesignapp.model.ArFragmentManager;
 import pl.lodz.p.interiordesignapp.utils.HelperUtil;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends FragmentActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final double MIN_OPENGL_VERSION = 3.0;
 
     private ArFragment arFragment;
     private ModelRenderable modelRenderable;
     private ArFragmentManager arFragmentManager;
-    private FloatingActionButton modelChooseButton;
-    private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
+    private FragmentPagerAdapter viewPagerAdapter;
 
 
     @Override
@@ -54,69 +60,12 @@ public class MainActivity extends AppCompatActivity {
         if (!checkIsSupportedDeviceOrFinish(this)) {
             return;
         }
-
         setContentView(R.layout.activity_main);
-        arFragmentManager = ArFragmentManager.getInstance(this);
-        //arFragment = arFragmentManager.getArFragment();
-        arFragment = (ArFragment) getSupportFragmentManager().findFragmentById(R.id.ux_fragment);
-        //arFragment.getArSceneView().setupSession(arFragmentManager.getArFragment().getArSceneView().getSession());
 
-       /* modelChooseButton = (FloatingActionButton) findViewById(R.id.modelChooseButton);
-        modelChooseButton.setOnClickListener(view -> {
-            Intent intent = new Intent(this, ModelSelectionActivity.class);
-            startActivity(intent);
-        });*/
-
-        mRecyclerView = (RecyclerView) findViewById(R.id.modelRecycleView);
-
-        // use this setting to improve performance if you know that changes
-        // in content do not change the layout size of the RecyclerView
-        mRecyclerView.setHasFixedSize(true);
-
-        // use a linear layout manager
-        mLayoutManager = new LinearLayoutManager(arFragment.getContext(), LinearLayoutManager.HORIZONTAL, false);
-        mRecyclerView.setLayoutManager(mLayoutManager);
-
-        List<String> modelNames = HelperUtil.getModelsNames(getResources());
-        // specify an adapter (see also next example)
-        mAdapter = new ModelAdapter(modelNames, getApplication());
-        mRecyclerView.setAdapter(mAdapter);
-        // When you build a Renderable, Sceneform loads its resources in the background while returning
-        // a CompletableFuture. Call thenAccept(), handle(), or check isDone() before calling get().
-        /*ModelRenderable.builder()
-                .setSource(this, Uri.parse("table.sfb"))
-                .build()
-                .thenAccept(renderable -> modelRenderable = renderable)
-                .exceptionally(
-                        throwable -> {
-                            Toast toast =
-                                    Toast.makeText(this, "Unable to load andy renderable", Toast.LENGTH_LONG);
-                            toast.setGravity(Gravity.CENTER, 0, 0);
-                            toast.show();
-                            return null;
-                        });*/
-        //arFragmentManager.setModelRenderable("drawer.sfb");
-        setRenderable("table.sfb");
-        modelRenderable = arFragmentManager.getModelRenderable();
-
-        arFragment.setOnTapArPlaneListener(
-                (HitResult hitResult, Plane plane, MotionEvent motionEvent) -> {
-                    if (modelRenderable == null) {
-                        return;
-                    }
-                    //setRenderable(arFragmentManager.getName());
-                    // Create the Anchor.
-                    Anchor anchor = hitResult.createAnchor();
-                   /* AnchorNode anchorNode = new AnchorNode(anchor);
-                    anchorNode.setParent(arFragment.getArSceneView().getScene());
-
-                    // Create the transformable andy and add it to the anchor.
-                    TransformableNode andy = new TransformableNode(arFragment.getTransformationSystem());
-                    andy.setParent(anchorNode);
-                    andy.setRenderable(modelRenderable);
-                    andy.select();*/
-                    placeObject(arFragment, anchor, Uri.parse(arFragmentManager.getName()));
-                });
+        ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
+        viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
+        viewPager.setAdapter(viewPagerAdapter);
+        viewPager.setOffscreenPageLimit(viewPagerAdapter.getCount()); // IMPORTANT! WE CAN NOT PREVENT TO REINITIALIZE AR FRAGMENT
     }
 
     /**
@@ -148,42 +97,36 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    private void setRenderable(String name) {
-        ModelRenderable.builder()
-                .setSource(this, Uri.parse(name))
-                .build()
-                .thenAccept(renderable -> modelRenderable = renderable)
-                .exceptionally(
-                        throwable -> {
-                            Toast toast =
-                                    Toast.makeText(this, "Unable to load andy renderable", Toast.LENGTH_LONG);
-                            toast.setGravity(Gravity.CENTER, 0, 0);
-                            toast.show();
-                            return null;
-                        });
+    class ViewPagerAdapter extends FragmentPagerAdapter {
+        private final int ITEMS_NUMBER = 2;
+
+        ViewPagerAdapter(FragmentManager fragmentManager) {
+            super(fragmentManager);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            switch (position) {
+                case 0:
+                    return new BlankFragment();
+                case 1:
+                    return new ModelSelectionFragment();
+                default:
+                    return null;
+            }
+        }
+
+        @Override
+        public int getCount() {
+            return ITEMS_NUMBER;
+        }
     }
 
-    private void placeObject(ArFragment fragment, Anchor anchor, Uri model) {
-        CompletableFuture<Void> renderableFuture =
-                ModelRenderable.builder()
-                        .setSource(fragment.getContext(), model)
-                        .build()
-                        .thenAccept(renderable -> addNodeToScene(fragment, anchor, renderable))
-                        .exceptionally((throwable -> {
-                            Toast toast =
-                                    Toast.makeText(this, "Unable to load andy renderable", Toast.LENGTH_LONG);
-                            toast.setGravity(Gravity.CENTER, 0, 0);
-                            toast.show();
-                            return null;
-                        }));
+    public ArFragment getArFragment() {
+        return arFragment;
     }
 
-    private void addNodeToScene(ArFragment fragment, Anchor anchor, Renderable renderable) {
-        AnchorNode anchorNode = new AnchorNode(anchor);
-        TransformableNode node = new TransformableNode(fragment.getTransformationSystem());
-        node.setRenderable(renderable);
-        node.setParent(anchorNode);
-        fragment.getArSceneView().getScene().addChild(anchorNode);
-        node.select();
+    public void setArFragment(ArFragment arFragment) {
+        this.arFragment = arFragment;
     }
 }
