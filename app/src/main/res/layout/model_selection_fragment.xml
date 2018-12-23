@@ -4,6 +4,12 @@
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".fragment.ModelSelectionFragment"
-    android:background="#000">
+    android:background="#fff">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/modelRecycleView"
+        android:scrollbars="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
 </android.support.constraint.ConstraintLayout>

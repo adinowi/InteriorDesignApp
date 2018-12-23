@@ -1,0 +1,163 @@
+{
+  animations: [
+    {
+      path: 'sampledata/sofa/sofa.fbx',
+    },
+  ],
+  materials: [
+    {
+      name: '09 - Default',
+      parameters: [
+        {
+          baseColor: [
+            1,
+            1,
+            1,
+            1,
+          ],
+        },
+        {
+          baseColorMap: 'S4',
+        },
+        {
+          normalMap: null,
+        },
+        {
+          interpolatedColor: null,
+        },
+        {
+          metallic: 0,
+        },
+        {
+          metallicMap: null,
+        },
+        {
+          roughness: 1,
+        },
+        {
+          roughnessMap: null,
+        },
+        {
+          reflectance: 0.5,
+        },
+        {
+          opacity: null,
+        },
+      ],
+      source: 'build/sceneform_sdk/default_materials/fbx_material.sfm',
+    },
+    {
+      name: '03 - Default',
+      parameters: [
+        {
+          baseColor: [
+            1,
+            1,
+            1,
+            1,
+          ],
+        },
+        {
+          baseColorMap: 'S2',
+        },
+        {
+          normalMap: null,
+        },
+        {
+          interpolatedColor: null,
+        },
+        {
+          metallic: 0,
+        },
+        {
+          metallicMap: null,
+        },
+        {
+          roughness: 1,
+        },
+        {
+          roughnessMap: null,
+        },
+        {
+          reflectance: 0.5,
+        },
+        {
+          opacity: null,
+        },
+      ],
+      source: 'build/sceneform_sdk/default_materials/fbx_material.sfm',
+    },
+    {
+      name: '08 - Default',
+      parameters: [
+        {
+          baseColor: [
+            1,
+            1,
+            1,
+            1,
+          ],
+        },
+        {
+          baseColorMap: 'S3',
+        },
+        {
+          normalMap: null,
+        },
+        {
+          interpolatedColor: null,
+        },
+        {
+          metallic: 0,
+        },
+        {
+          metallicMap: null,
+        },
+        {
+          roughness: 1,
+        },
+        {
+          roughnessMap: null,
+        },
+        {
+          reflectance: 0.5,
+        },
+        {
+          opacity: null,
+        },
+      ],
+      source: 'build/sceneform_sdk/default_materials/fbx_material.sfm',
+    },
+  ],
+  model: {
+    attributes: [
+      'Position',
+      'TexCoord',
+      'Orientation',
+      'BoneIndices',
+      'BoneWeights',
+    ],
+    collision: {},
+    file: 'sampledata/sofa/sofa.fbx',
+    name: 'sofa',
+    recenter: 'root',
+  },
+  samplers: [
+    {
+      file: 'sampledata/sofa\\S4.jpg',
+      name: 'S4',
+      pipeline_name: 'inzynierka\\good models\\Sofa 2\\Texture\\S4.jpg',
+    },
+    {
+      file: 'sampledata/sofa\\S2.jpg',
+      name: 'S2',
+      pipeline_name: 'inzynierka\\good models\\Sofa 2\\Texture\\S2.jpg',
+    },
+    {
+      file: 'sampledata/sofa\\S3.jpg',
+      name: 'S3',
+      pipeline_name: 'inzynierka\\good models\\Sofa 2\\Texture\\S3.jpg',
+    },
+  ],
+  version: '0.52:1',
+}

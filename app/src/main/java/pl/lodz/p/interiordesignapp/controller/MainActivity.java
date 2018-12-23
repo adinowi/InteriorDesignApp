@@ -13,6 +13,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -50,7 +51,7 @@ public class MainActivity extends FragmentActivity {
     private ArFragment arFragment;
     private ModelRenderable modelRenderable;
     private ArFragmentManager arFragmentManager;
-    private FragmentPagerAdapter viewPagerAdapter;
+    private FragmentStatePagerAdapter viewPagerAdapter;
 
 
     @Override
@@ -65,7 +66,7 @@ public class MainActivity extends FragmentActivity {
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
         viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(viewPagerAdapter);
-        viewPager.setOffscreenPageLimit(viewPagerAdapter.getCount()); // IMPORTANT! WE CAN NOT PREVENT TO REINITIALIZE AR FRAGMENT
+        //viewPager.setOffscreenPageLimit(viewPagerAdapter.getCount()); // IMPORTANT! WE CAN NOT PREVENT TO REINITIALIZE AR FRAGMENT
     }
 
     /**
@@ -97,7 +98,7 @@ public class MainActivity extends FragmentActivity {
         return true;
     }
 
-    class ViewPagerAdapter extends FragmentPagerAdapter {
+    class ViewPagerAdapter extends FragmentStatePagerAdapter {
         private final int ITEMS_NUMBER = 2;
 
         ViewPagerAdapter(FragmentManager fragmentManager) {
