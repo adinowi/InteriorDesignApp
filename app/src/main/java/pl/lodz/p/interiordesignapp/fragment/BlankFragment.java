@@ -1,11 +1,14 @@
 package pl.lodz.p.interiordesignapp.fragment;
 
+import android.content.ContentValues;
+import android.media.CamcorderProfile;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -25,19 +28,25 @@ import com.google.ar.sceneform.ux.TransformableNode;
 import java.util.concurrent.CompletableFuture;
 
 import pl.lodz.p.interiordesignapp.R;
-import pl.lodz.p.interiordesignapp.controller.MainActivity;
 import pl.lodz.p.interiordesignapp.model.ArFragmentManager;
+import pl.lodz.p.interiordesignapp.model.WritingArFragment;
+import pl.lodz.p.interiordesignapp.multimedia.PictureTaker;
+import pl.lodz.p.interiordesignapp.multimedia.VideoRecorder;
 
 public class BlankFragment extends Fragment {
-    private ArFragment arFragment;
+    private WritingArFragment arFragment;
     private ArFragmentManager arFragmentManager;
     private ModelRenderable modelRenderable;
+    private FloatingActionButton recordButton;
+    private FloatingActionButton takePicutreButton;
+    private VideoRecorder videoRecorder;
+    private PictureTaker pictureTaker;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.blank_fragment, container, false);
         arFragmentManager = ArFragmentManager.getInstance();
-        arFragment = (ArFragment) getChildFragmentManager().findFragmentById(R.id.ux_fragment);
+        arFragment = (WritingArFragment) getChildFragmentManager().findFragmentById(R.id.ux_fragment);
         setRenderable("table.sfb");
 
         arFragment.setOnTapArPlaneListener(
@@ -48,7 +57,49 @@ public class BlankFragment extends Fragment {
                     Anchor anchor = hitResult.createAnchor();
                     placeObject(arFragment, anchor, Uri.parse(arFragmentManager.getName()));
                 });
+        videoRecorder = new VideoRecorder();
+        videoRecorder.setSceneView(arFragment.getArSceneView());
+        videoRecorder.setVideoQuality(CamcorderProfile.QUALITY_720P, getResources().getConfiguration().orientation);
+        recordButton = (FloatingActionButton)view.findViewById(R.id.recordButton);
+        recordButton.setOnClickListener(this::toggleRecording);
+        pictureTaker = new PictureTaker();
+        pictureTaker.setSceneView(arFragment.getArSceneView());
+        takePicutreButton = (FloatingActionButton)view.findViewById(R.id.takePictureButton);
+        takePicutreButton.setOnClickListener(view1 -> {
+            pictureTaker.setSceneView(arFragment.getArSceneView());
+            pictureTaker.takePhoto(getContext());
+        });
+
         return view;
+    }
+
+    private void toggleRecording(View unusedView) {
+        if (!arFragment.hasWritePermission()) {
+            //Log.e(TAG, "Video recording requires the WRITE_EXTERNAL_STORAGE permission");
+            Toast.makeText(
+                    getContext(),
+                    "Video recording requires the WRITE_EXTERNAL_STORAGE permission",
+                    Toast.LENGTH_LONG)
+                    .show();
+            arFragment.launchPermissionSettings();
+            return;
+        }
+        boolean recording = videoRecorder.onToggleRecord();
+        if (recording) {
+            recordButton.setImageResource(R.drawable.ic_stop_white_24dp);
+        } else {
+            recordButton.setImageResource(R.drawable.ic_videocam_white_24dp);
+            String videoPath = videoRecorder.getVideoPath().getAbsolutePath();
+            Toast.makeText(getContext(), "Video saved: " + videoPath, Toast.LENGTH_SHORT).show();
+            //Log.d(TAG, "Video saved: " + videoPath);
+
+            // Send  notification of updated content.
+            ContentValues values = new ContentValues();
+            values.put(MediaStore.Video.Media.TITLE, "Sceneform Video");
+            values.put(MediaStore.Video.Media.MIME_TYPE, "video/mp4");
+            values.put(MediaStore.Video.Media.DATA, videoPath);
+            getContext().getContentResolver().insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, values);
+        }
     }
 
     private void setRenderable(String name) {
