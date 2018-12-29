@@ -40,6 +40,7 @@ import java.util.concurrent.CompletableFuture;
 import pl.lodz.p.interiordesignapp.R;
 import pl.lodz.p.interiordesignapp.adapter.ModelAdapter;
 import pl.lodz.p.interiordesignapp.fragment.BlankFragment;
+import pl.lodz.p.interiordesignapp.fragment.CategoryFragment;
 import pl.lodz.p.interiordesignapp.fragment.ModelSelectionFragment;
 import pl.lodz.p.interiordesignapp.model.ArFragmentManager;
 import pl.lodz.p.interiordesignapp.utils.HelperUtil;
@@ -111,7 +112,7 @@ public class MainActivity extends FragmentActivity {
                 case 0:
                     return new BlankFragment();
                 case 1:
-                    return new ModelSelectionFragment();
+                    return new CategoryFragment();
                 default:
                     return null;
             }

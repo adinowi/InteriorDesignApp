@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000">
+
+    <ImageButton
+        android:id="@+id/armChairCategoryButton"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="8dp"
+        android:background="#000"
+        android:scaleType="fitCenter"
+        android:src="@drawable/armchair"
+        app:layout_constraintBottom_toTopOf="@id/lampCategoryButton"
+        app:layout_constraintEnd_toStartOf="@id/bedCategoryButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/bedCategoryButton"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:background="#000"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toTopOf="@id/decorationCategoryButton"
+        app:layout_constraintEnd_toStartOf="@id/couchCategoryButton"
+        app:layout_constraintStart_toEndOf="@id/armChairCategoryButton"
+        app:layout_constraintTop_toTopOf="parent"
+        android:src="@drawable/bed" />
+
+    <ImageButton
+        android:id="@+id/couchCategoryButton"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:background="#000"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toTopOf="@id/wardrobeCategoryButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/bedCategoryButton"
+        app:layout_constraintTop_toTopOf="parent"
+        android:src="@drawable/couch" />
+
+    <ImageButton
+        android:id="@+id/lampCategoryButton"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="8dp"
+        android:background="#000"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toTopOf="@id/tableCategoryButton"
+        app:layout_constraintEnd_toStartOf="@id/decorationCategoryButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/armChairCategoryButton"
+        android:src="@drawable/chandelier" />
+
+    <ImageButton
+        android:id="@+id/decorationCategoryButton"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:background="#000"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toTopOf="@id/qrCodeButton"
+        app:layout_constraintEnd_toStartOf="@id/wardrobeCategoryButton"
+        app:layout_constraintStart_toEndOf="@id/lampCategoryButton"
+        app:layout_constraintTop_toBottomOf="@id/bedCategoryButton"
+        android:src="@drawable/frame" />
+
+    <ImageButton
+        android:id="@+id/wardrobeCategoryButton"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:background="#000"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toBottomOf="@id/decorationCategoryButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/bedCategoryButton"
+        app:layout_constraintTop_toBottomOf="@id/couchCategoryButton"
+        android:src="@drawable/wardrobe" />
+
+    <ImageButton
+        android:id="@+id/tableCategoryButton"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:background="#000"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/qrCodeButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/lampCategoryButton"
+        android:src="@drawable/table" />
+
+    <ImageButton
+        android:id="@+id/qrCodeButton"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:background="#000"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/decorationCategoryButton"
+        app:layout_constraintStart_toEndOf="@id/tableCategoryButton"
+        app:layout_constraintTop_toBottomOf="@id/decorationCategoryButton"
+        android:src="@drawable/qrcode" />
+
+
+</android.support.constraint.ConstraintLayout>
