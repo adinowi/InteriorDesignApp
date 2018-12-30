@@ -1,6 +1,7 @@
 package pl.lodz.p.interiordesignapp.fragment;
 
 import android.content.ContentValues;
+import android.content.Intent;
 import android.media.CamcorderProfile;
 import android.net.Uri;
 import android.os.Bundle;
@@ -19,6 +20,8 @@ import android.widget.Toast;
 import com.google.ar.core.Anchor;
 import com.google.ar.core.HitResult;
 import com.google.ar.core.Plane;
+import com.google.ar.core.Session;
+import com.google.ar.core.exceptions.CameraNotAvailableException;
 import com.google.ar.sceneform.AnchorNode;
 import com.google.ar.sceneform.rendering.ModelRenderable;
 import com.google.ar.sceneform.rendering.Renderable;
@@ -67,7 +70,7 @@ public class BlankFragment extends Fragment {
         takePicutreButton = (FloatingActionButton)view.findViewById(R.id.takePictureButton);
         takePicutreButton.setOnClickListener(view1 -> {
             pictureTaker.setSceneView(arFragment.getArSceneView());
-            pictureTaker.takePhoto(getContext());
+            pictureTaker.takePhoto(getActivity());
         });
 
         return view;
@@ -77,7 +80,7 @@ public class BlankFragment extends Fragment {
         if (!arFragment.hasWritePermission()) {
             //Log.e(TAG, "Video recording requires the WRITE_EXTERNAL_STORAGE permission");
             Toast.makeText(
-                    getContext(),
+                    getActivity(),
                     "Video recording requires the WRITE_EXTERNAL_STORAGE permission",
                     Toast.LENGTH_LONG)
                     .show();
@@ -90,7 +93,7 @@ public class BlankFragment extends Fragment {
         } else {
             recordButton.setImageResource(R.drawable.ic_videocam_white_24dp);
             String videoPath = videoRecorder.getVideoPath().getAbsolutePath();
-            Toast.makeText(getContext(), "Video saved: " + videoPath, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "Video saved: " + videoPath, Toast.LENGTH_SHORT).show();
             //Log.d(TAG, "Video saved: " + videoPath);
 
             // Send  notification of updated content.
@@ -98,19 +101,19 @@ public class BlankFragment extends Fragment {
             values.put(MediaStore.Video.Media.TITLE, "Sceneform Video");
             values.put(MediaStore.Video.Media.MIME_TYPE, "video/mp4");
             values.put(MediaStore.Video.Media.DATA, videoPath);
-            getContext().getContentResolver().insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, values);
+            getActivity().getContentResolver().insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, values);
         }
     }
 
     private void setRenderable(String name) {
         ModelRenderable.builder()
-                .setSource(this.getContext(), Uri.parse(name))
+                .setSource(getActivity(), Uri.parse(name))
                 .build()
                 .thenAccept(renderable -> modelRenderable = renderable)
                 .exceptionally(
                         throwable -> {
                             Toast toast =
-                                    Toast.makeText(this.getContext(), "Unable to load andy renderable", Toast.LENGTH_LONG);
+                                    Toast.makeText(getActivity(), "Unable to load andy renderable", Toast.LENGTH_LONG);
                             toast.setGravity(Gravity.CENTER, 0, 0);
                             toast.show();
                             return null;
@@ -120,12 +123,12 @@ public class BlankFragment extends Fragment {
     private void placeObject(ArFragment fragment, Anchor anchor, Uri model) {
         CompletableFuture<Void> renderableFuture =
                 ModelRenderable.builder()
-                        .setSource(fragment.getContext(), model)
+                        .setSource(getActivity(), model)
                         .build()
                         .thenAccept(renderable -> addNodeToScene(fragment, anchor, renderable))
                         .exceptionally((throwable -> {
                             Toast toast =
-                                    Toast.makeText(this.getContext(), "Unable to load andy renderable", Toast.LENGTH_LONG);
+                                    Toast.makeText(getActivity(), "Unable to load andy renderable", Toast.LENGTH_LONG);
                             toast.setGravity(Gravity.CENTER, 0, 0);
                             toast.show();
                             return null;
@@ -139,5 +142,29 @@ public class BlankFragment extends Fragment {
         node.setParent(anchorNode);
         fragment.getArSceneView().getScene().addChild(anchorNode);
         node.select();
+    }
+    /*@Override
+    public void setMenuVisibility(final boolean visible) {
+        super.setMenuVisibility(visible);
+        try {
+            if (arFragment != null && arFragment.getArSceneView() != null && arFragment.getArSceneView().getSession() != null) {
+                Session session = arFragment.getArSceneView().getSession();
+                if (visible) {
+                    session.resume();
+                    onResume();
+                } else{
+                    onPause();
+                    session.pause();
+
+                }
+            }
+        } catch (CameraNotAvailableException e) {
+            e.printStackTrace();
+        }
+    }*/
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }

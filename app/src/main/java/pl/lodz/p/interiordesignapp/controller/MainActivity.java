@@ -14,6 +14,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -25,6 +26,8 @@ import android.view.MotionEvent;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.android.gms.common.api.CommonStatusCodes;
+import com.google.android.gms.vision.barcode.Barcode;
 import com.google.ar.core.Anchor;
 import com.google.ar.core.HitResult;
 import com.google.ar.core.Plane;
@@ -39,19 +42,21 @@ import java.util.concurrent.CompletableFuture;
 
 import pl.lodz.p.interiordesignapp.R;
 import pl.lodz.p.interiordesignapp.adapter.ModelAdapter;
+import pl.lodz.p.interiordesignapp.barcode.BarCodeCaptureActivity;
+import pl.lodz.p.interiordesignapp.barcode.BarcodeTracker;
 import pl.lodz.p.interiordesignapp.fragment.BlankFragment;
 import pl.lodz.p.interiordesignapp.fragment.CategoryFragment;
 import pl.lodz.p.interiordesignapp.fragment.ModelSelectionFragment;
+import pl.lodz.p.interiordesignapp.fragment.RootFragment;
 import pl.lodz.p.interiordesignapp.model.ArFragmentManager;
 import pl.lodz.p.interiordesignapp.utils.HelperUtil;
+import com.google.android.gms.common.api.CommonStatusCodes;
 
 public class MainActivity extends FragmentActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final double MIN_OPENGL_VERSION = 3.0;
 
-    private ArFragment arFragment;
-    private ModelRenderable modelRenderable;
-    private ArFragmentManager arFragmentManager;
+
     private FragmentStatePagerAdapter viewPagerAdapter;
 
 
@@ -112,7 +117,7 @@ public class MainActivity extends FragmentActivity {
                 case 0:
                     return new BlankFragment();
                 case 1:
-                    return new CategoryFragment();
+                    return new RootFragment();
                 default:
                     return null;
             }
@@ -124,11 +129,8 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
-    public ArFragment getArFragment() {
-        return arFragment;
-    }
-
-    public void setArFragment(ArFragment arFragment) {
-        this.arFragment = arFragment;
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }
