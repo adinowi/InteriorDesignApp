@@ -19,19 +19,28 @@ import com.google.android.gms.vision.barcode.Barcode;
 
 import pl.lodz.p.interiordesignapp.R;
 import pl.lodz.p.interiordesignapp.barcode.BarCodeCaptureActivity;
-import pl.lodz.p.interiordesignapp.barcode.BarCodeCaptureFragment;
-import pl.lodz.p.interiordesignapp.controller.MainActivity;
 import pl.lodz.p.interiordesignapp.model.DesignObject;
 import pl.lodz.p.interiordesignapp.service.DownloadTask;
 import pl.lodz.p.interiordesignapp.service.ServiceManager;
+import pl.lodz.p.interiordesignapp.utils.AppConst;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class CategoryFragment extends Fragment {
-    private ImageButton qrCodeButton;
     private static final String TAG = CategoryFragment.class.getSimpleName();
     public static final int RC_BARCODE_CAPTURE = 9001;
+
+    private ImageButton qrCodeButton;
+    private ImageButton armChairCategoryButton;
+    private ImageButton bedCategoryButton;
+    private ImageButton couchCategoryButton;
+    private ImageButton lampCategoryButton;
+    private ImageButton decorationCategoryButton;
+    private ImageButton wardrobeCategoryButton;
+    private ImageButton tableCategoryButton;
+
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -41,8 +50,32 @@ public class CategoryFragment extends Fragment {
             Intent intent = new Intent(getActivity(), BarCodeCaptureActivity.class);
             startActivityForResult(intent, RC_BARCODE_CAPTURE);
         });
+        armChairCategoryButton = view.findViewById(R.id.armChairCategoryButton);
+        bedCategoryButton = view.findViewById(R.id.bedCategoryButton);
+        couchCategoryButton = view.findViewById(R.id.couchCategoryButton);
+        lampCategoryButton = view.findViewById(R.id.lampCategoryButton);
+        decorationCategoryButton = view.findViewById(R.id.decorationCategoryButton);
+        wardrobeCategoryButton = view.findViewById(R.id.wardrobeCategoryButton);
+        tableCategoryButton = view.findViewById(R.id.tableCategoryButton);
+
+        setCategoryButton(armChairCategoryButton, AppConst.ARMCHAIR_CATEGORY);
+        setCategoryButton(bedCategoryButton, AppConst.BED_CATEGORY);
+        setCategoryButton(couchCategoryButton, AppConst.COUCH_CATEGORY);
+        setCategoryButton(lampCategoryButton, AppConst.LAMP_CATEGORY);
+        setCategoryButton(decorationCategoryButton, AppConst.DECORATION_CATEGORY);
+        setCategoryButton(wardrobeCategoryButton, AppConst.WARDROBE_CATEGORY);
+        setCategoryButton(tableCategoryButton, AppConst.TABLE_CATEGORY);
 
         return view;
+    }
+
+    private void setCategoryButton(ImageButton button, String category) {
+        button.setOnClickListener(view -> {
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            transaction.replace(R.id.root_frame, ModelSelectionFragment.newInstance(category));
+
+            transaction.commit();
+        });
     }
 
     /*@Override
@@ -98,14 +131,14 @@ public class CategoryFragment extends Fragment {
 
 // instantiate it within the onCreate method
         mProgressDialog = new ProgressDialog(getContext());
-        mProgressDialog.setMessage("A message");
+        mProgressDialog.setMessage("Downloading files");
         mProgressDialog.setIndeterminate(true);
         mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         mProgressDialog.setCancelable(true);
 
 // execute this when the downloader must be fired
         final DownloadTask downloadTask = new DownloadTask(getContext(), mProgressDialog, designObject);
-        downloadTask.execute(ServiceManager.HOST_NAME + designObject.getImageURL());
+        downloadTask.execute(ServiceManager.HOST_NAME + designObject.getImageURL(), ServiceManager.HOST_NAME + designObject.getSfbURL());
 
         mProgressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override

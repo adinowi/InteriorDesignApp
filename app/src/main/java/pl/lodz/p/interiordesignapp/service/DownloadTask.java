@@ -16,6 +16,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import pl.lodz.p.interiordesignapp.model.DesignObject;
+import pl.lodz.p.interiordesignapp.utils.AppConst;
 
 // usually, subclasses of AsyncTask are declared inside the activity class.
 // that way, you can easily modify the UI thread from here
@@ -25,6 +26,8 @@ public class DownloadTask extends AsyncTask<String, Integer, String> {
     private PowerManager.WakeLock mWakeLock;
     private ProgressDialog mProgressDialog;
     private DesignObject designObject;
+    private static final String JPEG_EXT = ".jpg";
+    private static final String SFB_EXT = ".sfb";
 
     public DownloadTask(Context context, ProgressDialog progressDialog, DesignObject designObject) {
         this.context = context;
@@ -33,55 +36,44 @@ public class DownloadTask extends AsyncTask<String, Integer, String> {
     }
 
     @Override
-    protected String doInBackground(String... sUrl) {
+    protected String doInBackground(String... urls) {
+        if(urls.length != 2 || designObject.getName() == null ||
+                designObject.getName().equals("") || designObject.getCategory() == null ||
+                designObject.getCategory().equals("")) {
+            return null;
+        }
         InputStream input = null;
         OutputStream output = null;
-        HttpURLConnection connection = null;
+        HttpURLConnection connectionJPG = null;
+        HttpURLConnection connectionSFB = null;
         try {
-            URL url = new URL(sUrl[0]);
-            connection = (HttpURLConnection) url.openConnection();
-            connection.connect();
+            URL urlJPG = new URL(urls[0]);
+            URL urlSFB = new URL(urls[1]);
+            connectionJPG = (HttpURLConnection) urlJPG.openConnection();
+            connectionJPG.connect();
+            connectionSFB = (HttpURLConnection) urlSFB.openConnection();
+            connectionSFB.connect();
 
             // expect HTTP 200 OK, so we don't mistakenly save error report
             // instead of the file
-            if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
-                return "Server returned HTTP " + connection.getResponseCode()
-                        + " " + connection.getResponseMessage();
+            if (connectionJPG.getResponseCode() != HttpURLConnection.HTTP_OK) {
+                return "Server returned HTTP " + connectionJPG.getResponseCode()
+                        + " " + connectionJPG.getResponseMessage();
+            }
+
+            if (connectionSFB.getResponseCode() != HttpURLConnection.HTTP_OK) {
+                return "Server returned HTTP " + connectionSFB.getResponseCode()
+                        + " " + connectionSFB.getResponseMessage();
             }
 
             // this will be useful to display download percentage
             // might be -1: server did not report the length
-            int fileLength = connection.getContentLength();
-
-            // download the file
-            input = connection.getInputStream();
-
-            File directory = new File(context.getFilesDir() + "/models/" + designObject.getCategory() + "/");
-
-            if (! directory.exists()){
-                directory.mkdir();
+            int filesLength = connectionJPG.getContentLength() + connectionSFB.getContentLength();
+            if(downloadFile(JPEG_EXT, connectionJPG, filesLength, 0) == null) {
+                return null;
             }
-
-
-            File file = new File( directory + "/" + designObject.getName() + ".jpg");
-            file.getParentFile().mkdirs();
-            file.createNewFile();
-            output = new FileOutputStream(file);
-
-            byte data[] = new byte[4096];
-            long total = 0;
-            int count;
-            while ((count = input.read(data)) != -1) {
-                // allow canceling with back button
-                if (isCancelled()) {
-                    input.close();
-                    return null;
-                }
-                total += count;
-                // publishing the progress....
-                if (fileLength > 0) // only if total length is known
-                    publishProgress((int) (total * 100 / fileLength));
-                output.write(data, 0, count);
+            if(downloadFile(SFB_EXT, connectionSFB, filesLength, connectionJPG.getContentLength()) == null) {
+                return null;
             }
         } catch (Exception e) {
             return e.toString();
@@ -94,10 +86,48 @@ public class DownloadTask extends AsyncTask<String, Integer, String> {
             } catch (IOException ignored) {
             }
 
-            if (connection != null)
-                connection.disconnect();
+            if (connectionJPG != null) {
+                connectionJPG.disconnect();
+            }
+            if (connectionSFB != null) {
+                connectionSFB.disconnect();
+            }
         }
         return null;
+    }
+
+    private String downloadFile(String extension, HttpURLConnection connection, int filesLength, long totalDownload) throws IOException{
+        InputStream input = null;
+        OutputStream output = null;
+        input = connection.getInputStream();
+
+
+        File file = new File( context.getFilesDir() + "/" + AppConst.MODELS_DIR + "/" + designObject.getCategory() + "/" + designObject.getName() + extension);
+        if(!file.getParentFile().exists()) {
+            file.getParentFile().mkdirs();
+        }
+
+        file.createNewFile();
+        output = new FileOutputStream(file);
+
+        byte data[] = new byte[4096];
+        long total = totalDownload;
+        int count;
+        while ((count = input.read(data)) != -1) {
+            // allow canceling with back button
+            if (isCancelled()) {
+                input.close();
+                return null;
+            }
+            total += count;
+            // publishing the progress....
+            if (filesLength > 0) { // only if total length is known
+                publishProgress((int) (total * 100 / filesLength));
+            }
+            output.write(data, 0, count);
+        }
+
+        return "";
     }
 
     @Override
@@ -125,9 +155,10 @@ public class DownloadTask extends AsyncTask<String, Integer, String> {
     protected void onPostExecute(String result) {
         mWakeLock.release();
         mProgressDialog.dismiss();
-        if (result != null)
-            Toast.makeText(context,"Download error: "+result, Toast.LENGTH_LONG).show();
-        else
-            Toast.makeText(context,"File downloaded", Toast.LENGTH_SHORT).show();
+        if (result != null) {
+            Toast.makeText(context, "Download error: " + result, Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(context, "File downloaded", Toast.LENGTH_SHORT).show();
+        }
     }
 }

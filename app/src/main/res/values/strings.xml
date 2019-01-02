@@ -5,4 +5,12 @@
     <string name="permission_camera_rationale">Access to the camera is needed for detection</string>
     <string name="no_camera_permission">This application cannot run because it does not have the camera permission.  The application will now exit.</string>
     <string name="low_storage_error">Face detector dependencies cannot be downloaded due to low device storage</string>
+    <string name="armchairs">Armchairs</string>
+    <string name="beds">Beds</string>
+    <string name="couch">Couch</string>
+    <string name="lamps">Lamps</string>
+    <string name="decorations">Decorations</string>
+    <string name="wardrobe">Wardrobe</string>
+    <string name="tables">Tables</string>
+    <string name="qrcode">Scan &amp; download</string>
 </resources>

@@ -59,10 +59,6 @@ sceneform.asset('sampledata/table/table.fbx',
         'sampledata/table/table.sfa',
         'src/main/assets/models/table')
 
-sceneform.asset('sampledata/armchair/armchair.fbx',
-        'default',
-        'sampledata/armchair/armchair.sfa',
-        'src/main/assets/armchair')
 
 sceneform.asset('sampledata/sofa/sofa.fbx',
         'default',

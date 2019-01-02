@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -20,6 +21,26 @@ public class ModelSelectionFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
+    private String category;
+    private static final String CATEGORY_KEY = "category";
+
+    public static ModelSelectionFragment newInstance(String category) {
+        ModelSelectionFragment modelSelectionFragment = new ModelSelectionFragment();
+
+        Bundle bundle = new Bundle();
+        bundle.putString(CATEGORY_KEY, category);
+        modelSelectionFragment.setArguments(bundle);
+
+        return modelSelectionFragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if(savedInstanceState != null) {
+            this.category = savedInstanceState.getString(CATEGORY_KEY);
+        }
+    }
 
     @Nullable
     @Override
@@ -33,7 +54,7 @@ public class ModelSelectionFragment extends Fragment {
         mRecyclerView.setHasFixedSize(true);
 
         // use a linear layout manager
-        mLayoutManager = new LinearLayoutManager(this.getContext());
+        mLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         List<String> modelNames = HelperUtil.getModelsNames(getResources());

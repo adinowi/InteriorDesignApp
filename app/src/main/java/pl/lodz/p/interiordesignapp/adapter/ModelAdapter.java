@@ -3,11 +3,13 @@ package pl.lodz.p.interiordesignapp.adapter;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.util.List;
@@ -20,10 +22,12 @@ import pl.lodz.p.interiordesignapp.model.ArFragmentManager;
 public class ModelAdapter extends RecyclerView.Adapter<ModelAdapter.ModelViewHolder> {
     private List<String> models;
     private final LayoutInflater inflater;
+    private Application application;
 
     // Provide a suitable constructor (depends on the kind of dataset)
     public ModelAdapter(List<String> models, Application application) {
         this.models = models;
+        this.application = application;
         inflater = LayoutInflater.from(application.getApplicationContext());
 
     }
@@ -45,8 +49,11 @@ public class ModelAdapter extends RecyclerView.Adapter<ModelAdapter.ModelViewHol
         if(models != null) {
             final String modelName = models.get(position);
             if (modelName != null) {
-                holder.modelNameTextView.setText(modelName);
-                holder.setButton.setOnClickListener(view -> {
+
+                Drawable drawable = application.getApplicationContext().getResources().getDrawable(application.getApplicationContext().getResources()
+                        .getIdentifier((modelName.split("[.]"))[0], "drawable", application.getPackageName()));
+                holder.imageButton.setImageDrawable(drawable);
+                holder.imageButton.setOnClickListener(view -> {
                     ArFragmentManager.getInstance().setName(modelName);
                 });
             }
@@ -65,12 +72,10 @@ public class ModelAdapter extends RecyclerView.Adapter<ModelAdapter.ModelViewHol
     // you provide access to all the views for a data item in a view holder
     public static class ModelViewHolder extends RecyclerView.ViewHolder {
         // each data item is just a string in this case
-        public TextView modelNameTextView;
-        public Button setButton;
+        public ImageButton imageButton;
         public ModelViewHolder(View view) {
             super(view);
-            modelNameTextView = view.findViewById(R.id.modelNameTextView);
-            setButton = view.findViewById(R.id.setButton);
+            imageButton = view.findViewById(R.id.model);
         }
     }
 }
