@@ -1,5 +1,7 @@
 package pl.lodz.p.interiordesignapp.fragment;
 
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -19,6 +21,12 @@ import pl.lodz.p.interiordesignapp.R;
 import pl.lodz.p.interiordesignapp.barcode.BarCodeCaptureActivity;
 import pl.lodz.p.interiordesignapp.barcode.BarCodeCaptureFragment;
 import pl.lodz.p.interiordesignapp.controller.MainActivity;
+import pl.lodz.p.interiordesignapp.model.DesignObject;
+import pl.lodz.p.interiordesignapp.service.DownloadTask;
+import pl.lodz.p.interiordesignapp.service.ServiceManager;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class CategoryFragment extends Fragment {
     private ImageButton qrCodeButton;
@@ -55,6 +63,21 @@ public class CategoryFragment extends Fragment {
                     //statusMessage.setText(R.string.barcode_success);
                     //barcodeValue.setText(barcode.displayValue);
                     Log.d(TAG, "Barcode read: " + barcode.displayValue);
+                    ServiceManager.getInstance().getDesignObject(barcode.displayValue, new Callback<DesignObject>() {
+                        @Override
+                        public void onResponse(Call<DesignObject> call, Response<DesignObject> response) {
+                            DesignObject designObject = response.body();
+                            if(response.isSuccessful() && designObject != null) {
+                                //TODO
+                                startDownload(designObject);
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<DesignObject> call, Throwable t) {
+                            Log.d(TAG, "respnse error");
+                        }
+                    });
                 } else {
                     //statusMessage.setText(R.string.barcode_failure);
                     Log.d(TAG, "No barcode captured, intent data is null");
@@ -67,5 +90,28 @@ public class CategoryFragment extends Fragment {
         else {
             super.onActivityResult(requestCode, resultCode, data);
         }
+    }
+
+    private void startDownload(DesignObject designObject) {
+        // declare the dialog as a member field of your activity
+        ProgressDialog mProgressDialog;
+
+// instantiate it within the onCreate method
+        mProgressDialog = new ProgressDialog(getContext());
+        mProgressDialog.setMessage("A message");
+        mProgressDialog.setIndeterminate(true);
+        mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        mProgressDialog.setCancelable(true);
+
+// execute this when the downloader must be fired
+        final DownloadTask downloadTask = new DownloadTask(getContext(), mProgressDialog, designObject);
+        downloadTask.execute(ServiceManager.HOST_NAME + designObject.getImageURL());
+
+        mProgressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                downloadTask.cancel(true);
+            }
+        });
     }
 }
