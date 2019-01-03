@@ -14,12 +14,14 @@ import android.view.ViewGroup;
 import java.util.List;
 
 import pl.lodz.p.interiordesignapp.R;
+import pl.lodz.p.interiordesignapp.adapter.CategoryAdapter;
 import pl.lodz.p.interiordesignapp.adapter.ModelAdapter;
 import pl.lodz.p.interiordesignapp.utils.HelperUtil;
 
 public class ModelSelectionFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
+    private RecyclerView.Adapter categoryAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private String category;
     private static final String CATEGORY_KEY = "category";
@@ -37,8 +39,9 @@ public class ModelSelectionFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(savedInstanceState != null) {
-            this.category = savedInstanceState.getString(CATEGORY_KEY);
+        Bundle bundle = getArguments();
+        if(bundle != null) {
+            this.category = bundle.getString(CATEGORY_KEY);
         }
     }
 
@@ -54,12 +57,24 @@ public class ModelSelectionFragment extends Fragment {
         mRecyclerView.setHasFixedSize(true);
 
         // use a linear layout manager
-        mLayoutManager = new LinearLayoutManager(getContext());
+        mLayoutManager = new GridLayoutManager(getContext(),2);
+        ((GridLayoutManager) mLayoutManager).setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+                if(position == 0) {
+                    return 2;
+                } else  {
+                    return 1;
+                }
+            }
+        });
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        List<String> modelNames = HelperUtil.getModelsNames(getResources());
+        List<String> modelNames = HelperUtil.getModelsNames(getResources(), category);
         // specify an adapter (see also next example)
-        mAdapter = new ModelAdapter(modelNames, this.getActivity().getApplication());
+        mAdapter = new ModelAdapter(modelNames, this.getActivity().getApplication(), category, this);
+        //categoryAdapter = new CategoryAdapter(category, this.getActivity().getApplication());
+        //mRecyclerView.setAdapter(categoryAdapter);
         mRecyclerView.setAdapter(mAdapter);
 
         return view;

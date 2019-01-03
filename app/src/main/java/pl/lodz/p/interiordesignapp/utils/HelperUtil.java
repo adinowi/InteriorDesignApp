@@ -9,11 +9,11 @@ import java.util.Arrays;
 import java.util.List;
 
 public class HelperUtil {
-    public static List<String> getModelsNames(Resources resources) {
+    public static List<String> getModelsNames(Resources resources, String category) {
         List<String> result;
         try {
             AssetManager assetManager = resources.getAssets();
-            result = new ArrayList<String>(Arrays.asList(assetManager.list(AppConst.MODELS_DIR)));
+            result = new ArrayList<String>(Arrays.asList(assetManager.list(AppConst.MODELS_DIR + "/" + category)));
         } catch (IOException e) {
             result = new ArrayList<>();
         }

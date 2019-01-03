@@ -33,9 +33,9 @@ public class ModelSelectionActivity extends AppCompatActivity {
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        List<String> modelNames = HelperUtil.getModelsNames(getResources());
+        //List<String> modelNames = HelperUtil.getModelsNames(getResources());
         // specify an adapter (see also next example)
-        mAdapter = new ModelAdapter(modelNames, getApplication());
+        //mAdapter = new ModelAdapter(modelNames, getApplication());
         mRecyclerView.setAdapter(mAdapter);
     }
 }

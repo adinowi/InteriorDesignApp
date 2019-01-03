@@ -51,16 +51,16 @@ dependencies {
 sceneform.asset('sampledata/chestofdrawer/drawer.fbx',
         'default',
         'sampledata/chestofdrawer/drawer.sfa',
-        'src/main/assets/models/drawer')
+        'src/main/assets/models/wardrobe/drawer')
 
 
 sceneform.asset('sampledata/table/table.fbx',
         'default',
         'sampledata/table/table.sfa',
-        'src/main/assets/models/table')
+        'src/main/assets/models/table/table')
 
 
 sceneform.asset('sampledata/sofa/sofa.fbx',
         'default',
         'sampledata/sofa/sofa.sfa',
-        'src/main/assets/sofa')
+        'src/main/assets/models/couch/sofa')

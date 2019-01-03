@@ -101,7 +101,6 @@ public class CategoryFragment extends Fragment {
                         public void onResponse(Call<DesignObject> call, Response<DesignObject> response) {
                             DesignObject designObject = response.body();
                             if(response.isSuccessful() && designObject != null) {
-                                //TODO
                                 startDownload(designObject);
                             }
                         }

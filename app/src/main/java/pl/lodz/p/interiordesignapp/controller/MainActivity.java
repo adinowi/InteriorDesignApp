@@ -57,6 +57,7 @@ public class MainActivity extends FragmentActivity {
     private static final double MIN_OPENGL_VERSION = 3.0;
 
 
+
     private FragmentStatePagerAdapter viewPagerAdapter;
 
 
@@ -72,6 +73,7 @@ public class MainActivity extends FragmentActivity {
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
         viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(viewPagerAdapter);
+        ArFragmentManager.getInstance().setViewPager(viewPager);
         //viewPager.setOffscreenPageLimit(viewPagerAdapter.getCount()); // IMPORTANT! WE CAN NOT PREVENT TO REINITIALIZE AR FRAGMENT
     }
 
@@ -104,6 +106,11 @@ public class MainActivity extends FragmentActivity {
         return true;
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
     class ViewPagerAdapter extends FragmentStatePagerAdapter {
         private final int ITEMS_NUMBER = 2;
 
@@ -129,8 +136,5 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-    }
+
 }

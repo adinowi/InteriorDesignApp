@@ -107,7 +107,7 @@ public class BlankFragment extends Fragment {
 
     private void setRenderable(String name) {
         ModelRenderable.builder()
-                .setSource(getActivity(), Uri.parse(name))
+                .setSource(getActivity(), Uri.parse("file:///data/data/pl.lodz.p.interiordesignapp/files/models/armchair/Armchair.sfb"))
                 .build()
                 .thenAccept(renderable -> modelRenderable = renderable)
                 .exceptionally(
@@ -123,7 +123,7 @@ public class BlankFragment extends Fragment {
     private void placeObject(ArFragment fragment, Anchor anchor, Uri model) {
         CompletableFuture<Void> renderableFuture =
                 ModelRenderable.builder()
-                        .setSource(getActivity(), model)
+                        .setSource(getActivity(), Uri.parse("file:///data/data/pl.lodz.p.interiordesignapp/files/models/armchair/Armchair.sfb"))
                         .build()
                         .thenAccept(renderable -> addNodeToScene(fragment, anchor, renderable))
                         .exceptionally((throwable -> {

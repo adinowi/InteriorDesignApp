@@ -1,15 +1,22 @@
 package pl.lodz.p.interiordesignapp.adapter;
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
@@ -17,33 +24,41 @@ import java.util.List;
 import pl.lodz.p.interiordesignapp.R;
 import pl.lodz.p.interiordesignapp.controller.MainActivity;
 import pl.lodz.p.interiordesignapp.controller.ModelSelectionActivity;
+import pl.lodz.p.interiordesignapp.fragment.CategoryFragment;
+import pl.lodz.p.interiordesignapp.fragment.ModelSelectionFragment;
 import pl.lodz.p.interiordesignapp.model.ArFragmentManager;
 
-public class ModelAdapter extends RecyclerView.Adapter<ModelAdapter.ModelViewHolder> {
+public class ModelAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<String> models;
     private final LayoutInflater inflater;
     private Application application;
+    private String category;
+    private Fragment fragment;
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public ModelAdapter(List<String> models, Application application) {
+    public ModelAdapter(List<String> models, Application application, String category, Fragment fragment) {
         this.models = models;
         this.application = application;
         inflater = LayoutInflater.from(application.getApplicationContext());
-
+        this.category = category;
+        this.fragment = fragment;
     }
 
     // Create new views (invoked by the layout manager)
     @Override
-    public ModelAdapter.ModelViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         // create a new view
-        View view = (View) inflater.inflate(R.layout.model, parent, false);
-        ModelViewHolder modelViewHolder = new ModelViewHolder(view);
-        return modelViewHolder;
+        switch(viewType) {
+            case 0:
+                return new CategoryViewHolder(inflater.inflate(R.layout.category_model, parent, false));
+            default:
+                return new ModelViewHolder(inflater.inflate(R.layout.model, parent, false));
+        }
     }
 
     // Replace the contents of a view (invoked by the layout manager)
-    @Override
-    public void onBindViewHolder(ModelViewHolder holder, int position) {
+    /*@Override
+    public void onBindViewHolder(ViewGroup holder, int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         if(models != null) {
@@ -59,12 +74,67 @@ public class ModelAdapter extends RecyclerView.Adapter<ModelAdapter.ModelViewHol
             }
         }
 
+    }*/
+    @Override
+    public int getItemViewType(int position) {
+        if(position == 0) {
+            return 0;
+        }
+        return 1;
+    }
+
+
+    private void initializeModelViewHolder(ModelViewHolder holder, int position) {
+        if(models != null) {
+            final String modelName = models.get(position);
+            if (modelName != null) {
+
+                Drawable drawable = application.getApplicationContext().getResources().getDrawable(application.getApplicationContext().getResources()
+                        .getIdentifier((modelName.split("[.]"))[0], "drawable", application.getPackageName()));
+                holder.imageButton.setImageDrawable(drawable);
+                holder.imageButton.setOnClickListener(view -> {
+                    ArFragmentManager.getInstance().setName(modelName);
+                    FragmentTransaction transaction = fragment.getFragmentManager().beginTransaction();
+                    transaction.replace(R.id.root_frame, new CategoryFragment());
+                    ArFragmentManager.getInstance().getViewPager().setCurrentItem(0);
+                    transaction.commit();
+                });
+            }
+        }
+    }
+
+    private void initializeCategoryViewHolder(CategoryViewHolder holder) {
+        if(category != null && !category.equals("")) {
+            Drawable drawable = application.getApplicationContext().getResources().getDrawable(application.getApplicationContext().getResources()
+                    .getIdentifier(category + "_category", "drawable", application.getPackageName()));
+            holder.imageView.setImageDrawable(drawable);
+            String categoryName = application.getApplicationContext().getResources().getString(application.getApplicationContext().getResources()
+                    .getIdentifier(category, "string", application.getPackageName()));
+            holder.categoryText.setText(categoryName);
+            holder.backButton.setOnClickListener(view -> {
+                FragmentTransaction transaction = fragment.getFragmentManager().beginTransaction();
+                transaction.replace(R.id.root_frame, new CategoryFragment());
+
+                transaction.commit();
+            });
+        }
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
+        switch (position) {
+            case 0:
+                initializeCategoryViewHolder((CategoryViewHolder) viewHolder);
+                break;
+            default:
+                initializeModelViewHolder((ModelViewHolder) viewHolder, position - 1);
+        }
     }
 
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        return models.size();
+        return models.size() + 1;
     }
 
     // Provide a reference to the views for each data item
@@ -76,6 +146,19 @@ public class ModelAdapter extends RecyclerView.Adapter<ModelAdapter.ModelViewHol
         public ModelViewHolder(View view) {
             super(view);
             imageButton = view.findViewById(R.id.model);
+        }
+    }
+
+    public static class CategoryViewHolder extends RecyclerView.ViewHolder {
+        // each data item is just a string in this case
+        public ImageView imageView;
+        public TextView categoryText;
+        public ImageButton backButton;
+        public CategoryViewHolder(View view) {
+            super(view);
+            imageView = view.findViewById(R.id.categoryImage);
+            categoryText = view.findViewById(R.id.categoryText);
+            backButton = view.findViewById(R.id.backButton);
         }
     }
 }

@@ -41,7 +41,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/armchairs"
+            android:text="@string/armchair"
             android:textColor="#fff" />
     </LinearLayout>
 
@@ -80,7 +80,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/beds"
+            android:text="@string/bed"
             android:textColor="#fff" />
     </LinearLayout>
 
@@ -149,14 +149,14 @@
             android:paddingTop="8dp"
             android:paddingEnd="8dp"
             android:scaleType="fitCenter"
-            android:src="@drawable/chandelier_category"
+            android:src="@drawable/lamp_category"
             app:layout_constraintDimensionRatio="1:1" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/lamps"
+            android:text="@string/lamp"
             android:textColor="#fff" />
     </LinearLayout>
 
@@ -187,14 +187,14 @@
             android:paddingTop="8dp"
             android:paddingEnd="8dp"
             android:scaleType="fitCenter"
-            android:src="@drawable/frame_category"
+            android:src="@drawable/decoration_category"
             app:layout_constraintDimensionRatio="1:1" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/decorations"
+            android:text="@string/decoration"
             android:textColor="#fff" />
     </LinearLayout>
 
@@ -270,7 +270,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/tables"
+            android:text="@string/table"
             android:textColor="#fff" />
     </LinearLayout>
 
