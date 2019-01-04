@@ -16,6 +16,7 @@ import java.util.List;
 import pl.lodz.p.interiordesignapp.R;
 import pl.lodz.p.interiordesignapp.adapter.CategoryAdapter;
 import pl.lodz.p.interiordesignapp.adapter.ModelAdapter;
+import pl.lodz.p.interiordesignapp.model.ModelInfo;
 import pl.lodz.p.interiordesignapp.utils.HelperUtil;
 
 public class ModelSelectionFragment extends Fragment {
@@ -70,7 +71,7 @@ public class ModelSelectionFragment extends Fragment {
         });
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        List<String> modelNames = HelperUtil.getModelsNames(getResources(), category);
+        List<ModelInfo> modelNames = HelperUtil.getModelsInfo(getResources(), category, getContext().getFilesDir());
         // specify an adapter (see also next example)
         mAdapter = new ModelAdapter(modelNames, this.getActivity().getApplication(), category, this);
         //categoryAdapter = new CategoryAdapter(category, this.getActivity().getApplication());

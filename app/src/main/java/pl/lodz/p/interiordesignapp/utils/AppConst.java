@@ -9,4 +9,5 @@ public class AppConst {
     public static final String DECORATION_CATEGORY = "decoration";
     public static final String WARDROBE_CATEGORY = "wardrobe";
     public static final String TABLE_CATEGORY = "table";
+    public static final String FILE_DIR = "file:///data/data/pl.lodz.p.interiordesignapp/files/";
 }

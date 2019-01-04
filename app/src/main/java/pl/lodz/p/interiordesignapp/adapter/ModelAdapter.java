@@ -1,15 +1,13 @@
 package pl.lodz.p.interiordesignapp.adapter;
 
-import android.app.Activity;
 import android.app.Application;
-import android.content.Context;
-import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
+import android.support.constraint.ConstraintSet;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,24 +17,25 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.List;
 
 import pl.lodz.p.interiordesignapp.R;
-import pl.lodz.p.interiordesignapp.controller.MainActivity;
-import pl.lodz.p.interiordesignapp.controller.ModelSelectionActivity;
 import pl.lodz.p.interiordesignapp.fragment.CategoryFragment;
-import pl.lodz.p.interiordesignapp.fragment.ModelSelectionFragment;
 import pl.lodz.p.interiordesignapp.model.ArFragmentManager;
+import pl.lodz.p.interiordesignapp.model.ModelInfo;
+import pl.lodz.p.interiordesignapp.utils.HelperUtil;
 
 public class ModelAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private List<String> models;
+    private List<ModelInfo> models;
     private final LayoutInflater inflater;
     private Application application;
     private String category;
     private Fragment fragment;
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public ModelAdapter(List<String> models, Application application, String category, Fragment fragment) {
+    public ModelAdapter(List<ModelInfo> models, Application application, String category, Fragment fragment) {
         this.models = models;
         this.application = application;
         inflater = LayoutInflater.from(application.getApplicationContext());
@@ -86,14 +85,36 @@ public class ModelAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     private void initializeModelViewHolder(ModelViewHolder holder, int position) {
         if(models != null) {
-            final String modelName = models.get(position);
-            if (modelName != null) {
+            final ModelInfo model = models.get(position);
+            if (model != null) {
+                Drawable drawable;
+                if(model.isDownloaded()){
+                    try {
+                        Uri uriImage = Uri.parse(model.getDir() + model.getImagePath());
+                        InputStream inputStream = application.getApplicationContext().getContentResolver().openInputStream(uriImage);
+                        drawable = Drawable.createFromStream(inputStream, uriImage.toString());
+                        holder.deleteButton.setVisibility(View.VISIBLE);
+                        holder.deleteButton.setOnClickListener(view -> {
+                            Uri uriSfb = Uri.parse(model.getDir() + model.getName());
+                            HelperUtil.deleteFile(uriImage);
+                            HelperUtil.deleteFile(uriSfb);
+                            models.remove(position);
+                            notifyItemRemoved(position);
+                            notifyItemRangeChanged(position, models.size());
+                        });
+                        //holder.constraintLayout.addView(deleteButton);
+                    } catch (FileNotFoundException e) {
+                        drawable = application.getApplicationContext().getResources().getDrawable(R.drawable.question);
+                        e.printStackTrace();
+                    }
+                } else {
+                    drawable = application.getApplicationContext().getResources().getDrawable(application.getApplicationContext().getResources()
+                            .getIdentifier((model.getName().split("[.]"))[0], "drawable", application.getPackageName()));
+                }
 
-                Drawable drawable = application.getApplicationContext().getResources().getDrawable(application.getApplicationContext().getResources()
-                        .getIdentifier((modelName.split("[.]"))[0], "drawable", application.getPackageName()));
                 holder.imageButton.setImageDrawable(drawable);
                 holder.imageButton.setOnClickListener(view -> {
-                    ArFragmentManager.getInstance().setName(modelName);
+                    ArFragmentManager.getInstance().setName(model.toString());
                     FragmentTransaction transaction = fragment.getFragmentManager().beginTransaction();
                     transaction.replace(R.id.root_frame, new CategoryFragment());
                     ArFragmentManager.getInstance().getViewPager().setCurrentItem(0);
@@ -143,9 +164,11 @@ public class ModelAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public static class ModelViewHolder extends RecyclerView.ViewHolder {
         // each data item is just a string in this case
         public ImageButton imageButton;
+        public ImageButton deleteButton;
         public ModelViewHolder(View view) {
             super(view);
             imageButton = view.findViewById(R.id.model);
+            deleteButton = view.findViewById(R.id.deleteButton);
         }
     }
 
@@ -154,11 +177,13 @@ public class ModelAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         public ImageView imageView;
         public TextView categoryText;
         public ImageButton backButton;
+
         public CategoryViewHolder(View view) {
             super(view);
             imageView = view.findViewById(R.id.categoryImage);
             categoryText = view.findViewById(R.id.categoryText);
             backButton = view.findViewById(R.id.backButton);
+
         }
     }
 }
