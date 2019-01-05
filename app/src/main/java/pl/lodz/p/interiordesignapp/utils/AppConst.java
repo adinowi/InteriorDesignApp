@@ -10,4 +10,6 @@ public class AppConst {
     public static final String WARDROBE_CATEGORY = "wardrobe";
     public static final String TABLE_CATEGORY = "table";
     public static final String FILE_DIR = "file:///data/data/pl.lodz.p.interiordesignapp/files/";
+    public static final String ARCORE_FRAGMENT_TAG = "arcoreFragment";
+    public static final String MENU_FRAGMENT_TAG = "menuFragment";
 }

@@ -1,7 +1,9 @@
 package pl.lodz.p.interiordesignapp.model;
 
+import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.view.Gravity;
 import android.widget.Toast;
@@ -18,6 +20,8 @@ public class ArFragmentManager {
     private static ArFragmentManager manager;
     private String name;
     private ViewPager viewPager;
+    private Activity activity;
+    private Fragment fragment;
 
 
     private ArFragmentManager() {
@@ -45,5 +49,21 @@ public class ArFragmentManager {
 
     public void setViewPager(ViewPager viewPager) {
         this.viewPager = viewPager;
+    }
+
+    public Activity getActivity() {
+        return activity;
+    }
+
+    public void setActivity(Activity activity) {
+        this.activity = activity;
+    }
+
+    public Fragment getFragment() {
+        return fragment;
+    }
+
+    public void setFragment(Fragment fragment) {
+        this.fragment = fragment;
     }
 }

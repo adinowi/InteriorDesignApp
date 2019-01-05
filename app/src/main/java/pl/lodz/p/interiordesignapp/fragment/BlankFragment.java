@@ -31,6 +31,7 @@ import com.google.ar.sceneform.ux.TransformableNode;
 import java.util.concurrent.CompletableFuture;
 
 import pl.lodz.p.interiordesignapp.R;
+import pl.lodz.p.interiordesignapp.arcore.CustomTransformableNode;
 import pl.lodz.p.interiordesignapp.model.ArFragmentManager;
 import pl.lodz.p.interiordesignapp.model.WritingArFragment;
 import pl.lodz.p.interiordesignapp.multimedia.PictureTaker;
@@ -50,8 +51,8 @@ public class BlankFragment extends Fragment {
         View view = inflater.inflate(R.layout.blank_fragment, container, false);
         arFragmentManager = ArFragmentManager.getInstance();
         arFragment = (WritingArFragment) getChildFragmentManager().findFragmentById(R.id.ux_fragment);
-        setRenderable("table.sfb");
 
+        setRenderable("table.sfb");
         arFragment.setOnTapArPlaneListener(
                 (HitResult hitResult, Plane plane, MotionEvent motionEvent) -> {
                     if (modelRenderable == null) {
@@ -137,7 +138,7 @@ public class BlankFragment extends Fragment {
 
     private void addNodeToScene(ArFragment fragment, Anchor anchor, Renderable renderable) {
         AnchorNode anchorNode = new AnchorNode(anchor);
-        TransformableNode node = new TransformableNode(fragment.getTransformationSystem());
+        CustomTransformableNode node = new CustomTransformableNode(getContext() ,fragment.getTransformationSystem());
         node.setRenderable(renderable);
         node.setParent(anchorNode);
         fragment.getArSceneView().getScene().addChild(anchorNode);
@@ -167,4 +168,6 @@ public class BlankFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
     }
+
+
 }

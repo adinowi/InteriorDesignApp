@@ -8,6 +8,7 @@ import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Build.VERSION_CODES;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -23,6 +24,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -49,6 +51,7 @@ import pl.lodz.p.interiordesignapp.fragment.CategoryFragment;
 import pl.lodz.p.interiordesignapp.fragment.ModelSelectionFragment;
 import pl.lodz.p.interiordesignapp.fragment.RootFragment;
 import pl.lodz.p.interiordesignapp.model.ArFragmentManager;
+import pl.lodz.p.interiordesignapp.utils.AppConst;
 import pl.lodz.p.interiordesignapp.utils.HelperUtil;
 import com.google.android.gms.common.api.CommonStatusCodes;
 
@@ -71,9 +74,27 @@ public class MainActivity extends FragmentActivity {
         setContentView(R.layout.activity_main);
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int i, float v, int i1) {
+
+            }
+
+            @Override
+            public void onPageSelected(int i) {
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int i) {
+                    ArFragmentManager.getInstance().getFragment().getView().bringToFront();
+                
+            }
+        });
         viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(viewPagerAdapter);
         ArFragmentManager.getInstance().setViewPager(viewPager);
+        ArFragmentManager.getInstance().setActivity(this);
         //viewPager.setOffscreenPageLimit(viewPagerAdapter.getCount()); // IMPORTANT! WE CAN NOT PREVENT TO REINITIALIZE AR FRAGMENT
     }
 
@@ -111,30 +132,12 @@ public class MainActivity extends FragmentActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    class ViewPagerAdapter extends FragmentStatePagerAdapter {
-        private final int ITEMS_NUMBER = 2;
-
-        ViewPagerAdapter(FragmentManager fragmentManager) {
-            super(fragmentManager);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            switch (position) {
-                case 0:
-                    return new BlankFragment();
-                case 1:
-                    return new RootFragment();
-                default:
-                    return null;
-            }
-        }
-
-        @Override
-        public int getCount() {
-            return ITEMS_NUMBER;
-        }
+    public void restartActivity() {
+        super.onStart();
     }
+
+
+
 
 
 }

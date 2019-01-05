@@ -115,7 +115,7 @@ public class ModelAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 holder.imageButton.setImageDrawable(drawable);
                 holder.imageButton.setOnClickListener(view -> {
                     ArFragmentManager.getInstance().setName(model.toString());
-                    FragmentTransaction transaction = fragment.getFragmentManager().beginTransaction();
+                    FragmentTransaction transaction = fragment.getActivity().getSupportFragmentManager().beginTransaction();
                     transaction.replace(R.id.root_frame, new CategoryFragment());
                     ArFragmentManager.getInstance().getViewPager().setCurrentItem(0);
                     transaction.commit();
@@ -133,7 +133,7 @@ public class ModelAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                     .getIdentifier(category, "string", application.getPackageName()));
             holder.categoryText.setText(categoryName);
             holder.backButton.setOnClickListener(view -> {
-                FragmentTransaction transaction = fragment.getFragmentManager().beginTransaction();
+                FragmentTransaction transaction = fragment.getActivity().getSupportFragmentManager().beginTransaction();
                 transaction.replace(R.id.root_frame, new CategoryFragment());
 
                 transaction.commit();

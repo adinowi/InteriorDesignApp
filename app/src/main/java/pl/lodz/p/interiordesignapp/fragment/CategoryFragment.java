@@ -19,6 +19,7 @@ import com.google.android.gms.vision.barcode.Barcode;
 
 import pl.lodz.p.interiordesignapp.R;
 import pl.lodz.p.interiordesignapp.barcode.BarCodeCaptureActivity;
+import pl.lodz.p.interiordesignapp.model.ArFragmentManager;
 import pl.lodz.p.interiordesignapp.model.DesignObject;
 import pl.lodz.p.interiordesignapp.service.DownloadTask;
 import pl.lodz.p.interiordesignapp.service.ServiceManager;
@@ -66,26 +67,34 @@ public class CategoryFragment extends Fragment {
         setCategoryButton(wardrobeCategoryButton, AppConst.WARDROBE_CATEGORY);
         setCategoryButton(tableCategoryButton, AppConst.TABLE_CATEGORY);
 
+
+        view.bringToFront();
         return view;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        ArFragmentManager.getInstance().setFragment(this);
     }
 
     private void setCategoryButton(ImageButton button, String category) {
         button.setOnClickListener(view -> {
-            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.root_frame, ModelSelectionFragment.newInstance(category));
 
             transaction.commit();
         });
     }
 
-    /*@Override
+    @Override
     public void setMenuVisibility(final boolean visible) {
         super.setMenuVisibility(visible);
         if(visible) {
-            getChildFragmentManager().beginTransaction()
+            getActivity().getSupportFragmentManager().beginTransaction()
                     .replace(R.id.root_frame, new CategoryFragment()).commit();
         }
-    }*/
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

@@ -16,6 +16,7 @@ import java.util.List;
 import pl.lodz.p.interiordesignapp.R;
 import pl.lodz.p.interiordesignapp.adapter.CategoryAdapter;
 import pl.lodz.p.interiordesignapp.adapter.ModelAdapter;
+import pl.lodz.p.interiordesignapp.model.ArFragmentManager;
 import pl.lodz.p.interiordesignapp.model.ModelInfo;
 import pl.lodz.p.interiordesignapp.utils.HelperUtil;
 
@@ -77,6 +78,8 @@ public class ModelSelectionFragment extends Fragment {
         //categoryAdapter = new CategoryAdapter(category, this.getActivity().getApplication());
         //mRecyclerView.setAdapter(categoryAdapter);
         mRecyclerView.setAdapter(mAdapter);
+
+        ArFragmentManager.getInstance().setFragment(this);
 
         return view;
     }
