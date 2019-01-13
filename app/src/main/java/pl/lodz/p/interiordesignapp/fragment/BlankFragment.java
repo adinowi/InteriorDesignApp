@@ -20,20 +20,19 @@ import android.widget.Toast;
 import com.google.ar.core.Anchor;
 import com.google.ar.core.HitResult;
 import com.google.ar.core.Plane;
-import com.google.ar.core.Session;
-import com.google.ar.core.exceptions.CameraNotAvailableException;
 import com.google.ar.sceneform.AnchorNode;
 import com.google.ar.sceneform.rendering.ModelRenderable;
 import com.google.ar.sceneform.rendering.Renderable;
 import com.google.ar.sceneform.ux.ArFragment;
-import com.google.ar.sceneform.ux.TransformableNode;
 
+import java.io.File;
 import java.util.concurrent.CompletableFuture;
 
 import pl.lodz.p.interiordesignapp.R;
 import pl.lodz.p.interiordesignapp.arcore.CustomTransformableNode;
 import pl.lodz.p.interiordesignapp.model.ArFragmentManager;
-import pl.lodz.p.interiordesignapp.model.WritingArFragment;
+import pl.lodz.p.interiordesignapp.arcore.WritingArFragment;
+import pl.lodz.p.interiordesignapp.model.DesignModel;
 import pl.lodz.p.interiordesignapp.multimedia.PictureTaker;
 import pl.lodz.p.interiordesignapp.multimedia.VideoRecorder;
 
@@ -55,11 +54,8 @@ public class BlankFragment extends Fragment {
         setRenderable("table.sfb");
         arFragment.setOnTapArPlaneListener(
                 (HitResult hitResult, Plane plane, MotionEvent motionEvent) -> {
-                    if (modelRenderable == null) {
-                        return;
-                    }
                     Anchor anchor = hitResult.createAnchor();
-                    placeObject(arFragment, anchor, Uri.parse(arFragmentManager.getName()));
+                    addNodeToScene(arFragment, anchor, arFragmentManager.getDesignModel());
                 });
         videoRecorder = new VideoRecorder();
         videoRecorder.setSceneView(arFragment.getArSceneView());
@@ -121,12 +117,13 @@ public class BlankFragment extends Fragment {
                         });
     }
 
-    private void placeObject(ArFragment fragment, Anchor anchor, Uri model) {
+    /*private void placeObject(ArFragment fragment, Anchor anchor, DesignModel designModel) {
+        File file = new File(designModel.getSfbPath());
         CompletableFuture<Void> renderableFuture =
                 ModelRenderable.builder()
-                        .setSource(getActivity(), model)
+                        .setSource(getActivity(), Uri.fromFile(file))
                         .build()
-                        .thenAccept(renderable -> addNodeToScene(fragment, anchor, renderable))
+                        .thenAccept(renderable -> addNodeToScene(fragment, anchor, renderable, designModel))
                         .exceptionally((throwable -> {
                             Toast toast =
                                     Toast.makeText(getActivity(), "Unable to load andy renderable", Toast.LENGTH_LONG);
@@ -134,12 +131,11 @@ public class BlankFragment extends Fragment {
                             toast.show();
                             return null;
                         }));
-    }
+    }*/
 
-    private void addNodeToScene(ArFragment fragment, Anchor anchor, Renderable renderable) {
+    private void addNodeToScene(ArFragment fragment, Anchor anchor, DesignModel designModel) {
         AnchorNode anchorNode = new AnchorNode(anchor);
-        CustomTransformableNode node = new CustomTransformableNode(getContext() ,fragment.getTransformationSystem());
-        node.setRenderable(renderable);
+        CustomTransformableNode node = new CustomTransformableNode(getActivity() ,fragment.getTransformationSystem(), designModel);
         node.setParent(anchorNode);
         fragment.getArSceneView().getScene().addChild(anchorNode);
         node.select();

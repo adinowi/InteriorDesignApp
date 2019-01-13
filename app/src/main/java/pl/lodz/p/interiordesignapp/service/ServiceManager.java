@@ -1,6 +1,7 @@
 package pl.lodz.p.interiordesignapp.service;
 
 import java.io.IOException;
+import java.util.List;
 
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -48,5 +49,9 @@ public class ServiceManager {
 
     public void getDesignObject(String url, Callback<DesignObject> callback) {
         dataService.getDesignObject(url).enqueue(callback);
+    }
+
+    public void getSubDesignObject(String url, Callback<List<DesignObject>> callback) {
+        dataService.getSubDesignObject(url).enqueue(callback);
     }
 }

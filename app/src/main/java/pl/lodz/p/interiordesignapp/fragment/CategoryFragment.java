@@ -17,6 +17,8 @@ import android.widget.ImageButton;
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
 
+import java.util.List;
+
 import pl.lodz.p.interiordesignapp.R;
 import pl.lodz.p.interiordesignapp.barcode.BarCodeCaptureActivity;
 import pl.lodz.p.interiordesignapp.model.ArFragmentManager;
@@ -110,7 +112,22 @@ public class CategoryFragment extends Fragment {
                         public void onResponse(Call<DesignObject> call, Response<DesignObject> response) {
                             DesignObject designObject = response.body();
                             if(response.isSuccessful() && designObject != null) {
-                                startDownload(designObject);
+                                ServiceManager.getInstance().getSubDesignObject(barcode.displayValue + "/subdesignobjects", new Callback<List<DesignObject>>() {
+                                    @Override
+                                    public void onResponse(Call<List<DesignObject>> call, Response<List<DesignObject>> response) {
+                                        List<DesignObject> designObjects = response.body();
+                                        if(response.isSuccessful() && designObjects != null) {
+                                                startDownload(designObject, designObjects);
+                                        }
+
+                                    }
+                                        @Override
+                                        public void onFailure(Call<List<DesignObject>> call, Throwable t) {
+                                            Log.d(TAG, "respnse error");
+                                            startDownload(designObject, false, designObject.getName());
+                                        }
+                                    });
+
                             }
                         }
 
@@ -133,7 +150,7 @@ public class CategoryFragment extends Fragment {
         }
     }
 
-    private void startDownload(DesignObject designObject) {
+    private void startDownload(DesignObject designObject, boolean isSub, String name) {
         // declare the dialog as a member field of your activity
         ProgressDialog mProgressDialog;
 
@@ -145,7 +162,7 @@ public class CategoryFragment extends Fragment {
         mProgressDialog.setCancelable(true);
 
 // execute this when the downloader must be fired
-        final DownloadTask downloadTask = new DownloadTask(getContext(), mProgressDialog, designObject);
+        final DownloadTask downloadTask = new DownloadTask(getContext(), mProgressDialog, designObject, isSub, name);
         downloadTask.execute(ServiceManager.HOST_NAME + designObject.getImageURL(), ServiceManager.HOST_NAME + designObject.getSfbURL());
 
         mProgressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
@@ -154,5 +171,12 @@ public class CategoryFragment extends Fragment {
                 downloadTask.cancel(true);
             }
         });
+    }
+
+    private void startDownload(DesignObject designObject, List<DesignObject> designObjects) {
+        startDownload(designObject, false, designObject.getName());
+        for(DesignObject subDesignObject : designObjects) {
+            startDownload(subDesignObject, true, designObject.getName());
+        }
     }
 }

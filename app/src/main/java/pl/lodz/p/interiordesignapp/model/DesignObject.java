@@ -13,12 +13,15 @@ public class DesignObject implements Serializable {
     private String imageURL;
     @SerializedName("sfb")
     private String sfbURL;
+    @SerializedName("color")
+    private String color;
 
-    public DesignObject(String name, String category, String imageURL, String sfbURL) {
+    public DesignObject(String name, String category, String imageURL, String sfbURL, String color) {
         this.name = name;
         this.category = category;
         this.imageURL = imageURL;
         this.sfbURL = sfbURL;
+        this.color = color;
     }
 
     public String getName() {
@@ -51,5 +54,13 @@ public class DesignObject implements Serializable {
 
     public void setSfbURL(String sfbURL) {
         this.sfbURL = sfbURL;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
     }
 }

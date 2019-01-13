@@ -4,38 +4,39 @@ import android.app.Application;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.annotation.NonNull;
-import android.support.constraint.ConstraintLayout;
-import android.support.constraint.ConstraintSet;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.apache.commons.io.FileUtils;
+
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
 import pl.lodz.p.interiordesignapp.R;
 import pl.lodz.p.interiordesignapp.fragment.CategoryFragment;
 import pl.lodz.p.interiordesignapp.model.ArFragmentManager;
-import pl.lodz.p.interiordesignapp.model.ModelInfo;
-import pl.lodz.p.interiordesignapp.utils.HelperUtil;
+import pl.lodz.p.interiordesignapp.model.DesignModel;
 
 public class ModelAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private List<ModelInfo> models;
+    private List<DesignModel> models;
     private final LayoutInflater inflater;
     private Application application;
     private String category;
     private Fragment fragment;
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public ModelAdapter(List<ModelInfo> models, Application application, String category, Fragment fragment) {
+    public ModelAdapter(List<DesignModel> models, Application application, String category, Fragment fragment) {
         this.models = models;
         this.application = application;
         inflater = LayoutInflater.from(application.getApplicationContext());
@@ -85,22 +86,32 @@ public class ModelAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     private void initializeModelViewHolder(ModelViewHolder holder, int position) {
         if(models != null) {
-            final ModelInfo model = models.get(position);
+            final DesignModel model = models.get(position);
             if (model != null) {
                 Drawable drawable;
                 if(model.isDownloaded()){
                     try {
-                        Uri uriImage = Uri.parse(model.getDir() + model.getImagePath());
-                        InputStream inputStream = application.getApplicationContext().getContentResolver().openInputStream(uriImage);
-                        drawable = Drawable.createFromStream(inputStream, uriImage.toString());
+                        //Uri uriImage = Uri.parse(model.getSfbName() + model.getImageName());
+                        Log.d("IMAGE_PATH" , model.getImagePath() );
+                        File imageFile = new File(model.getImagePath());
+                        //Uri uriImage = Uri.parse(model.getImagePath());
+
+                        InputStream inputStream = application.getApplicationContext().getContentResolver().openInputStream(Uri.fromFile(imageFile));
+                        drawable = Drawable.createFromStream(inputStream, Uri.fromFile(imageFile).toString());
                         holder.deleteButton.setVisibility(View.VISIBLE);
                         holder.deleteButton.setOnClickListener(view -> {
-                            Uri uriSfb = Uri.parse(model.getDir() + model.getName());
+                            //Uri uriSfb = Uri.parse(model.getSfbName() + model.getName());
+                            /*Uri uriSfb = Uri.parse(model.getSfbPath());
                             HelperUtil.deleteFile(uriImage);
-                            HelperUtil.deleteFile(uriSfb);
-                            models.remove(position);
-                            notifyItemRemoved(position);
-                            notifyItemRangeChanged(position, models.size());
+                            HelperUtil.deleteFile(uriSfb);*/
+                            try {
+                                FileUtils.deleteDirectory(new File(model.getMainDir()));
+                                models.remove(position);
+                                notifyItemRemoved(position);
+                                notifyItemRangeChanged(position, models.size());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
                         });
                         //holder.constraintLayout.addView(deleteButton);
                     } catch (FileNotFoundException e) {
@@ -109,16 +120,24 @@ public class ModelAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                     }
                 } else {
                     drawable = application.getApplicationContext().getResources().getDrawable(application.getApplicationContext().getResources()
-                            .getIdentifier((model.getName().split("[.]"))[0], "drawable", application.getPackageName()));
+                            .getIdentifier(model.getImagePath(), "drawable", application.getPackageName()));
                 }
 
                 holder.imageButton.setImageDrawable(drawable);
                 holder.imageButton.setOnClickListener(view -> {
-                    ArFragmentManager.getInstance().setName(model.toString());
-                    FragmentTransaction transaction = fragment.getActivity().getSupportFragmentManager().beginTransaction();
-                    transaction.replace(R.id.root_frame, new CategoryFragment());
-                    ArFragmentManager.getInstance().getViewPager().setCurrentItem(0);
-                    transaction.commit();
+                    Log.d("SFB_PATH" , model.getSfbPath() );
+                    /*try {
+                        File sfbFile = new File(model.getSfbPath());*/
+
+                        //ArFragmentManager.getInstance().setName(sfbFile.getCanonicalPath());
+                        ArFragmentManager.getInstance().setDesignModel(model);
+                        FragmentTransaction transaction = fragment.getActivity().getSupportFragmentManager().beginTransaction();
+                        transaction.replace(R.id.root_frame, new CategoryFragment());
+                        ArFragmentManager.getInstance().getViewPager().setCurrentItem(0);
+                        transaction.commit();
+                    /*} catch (IOException e) {
+                        e.printStackTrace();
+                    }*/
                 });
             }
         }

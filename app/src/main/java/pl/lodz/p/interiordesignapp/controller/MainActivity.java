@@ -4,56 +4,17 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Build.VERSION_CODES;
-import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.MotionEvent;
-import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.Toast;
 
-import com.google.android.gms.common.api.CommonStatusCodes;
-import com.google.android.gms.vision.barcode.Barcode;
-import com.google.ar.core.Anchor;
-import com.google.ar.core.HitResult;
-import com.google.ar.core.Plane;
-import com.google.ar.sceneform.AnchorNode;
-import com.google.ar.sceneform.rendering.ModelRenderable;
-import com.google.ar.sceneform.rendering.Renderable;
-import com.google.ar.sceneform.ux.ArFragment;
-import com.google.ar.sceneform.ux.TransformableNode;
-
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
-
 import pl.lodz.p.interiordesignapp.R;
-import pl.lodz.p.interiordesignapp.adapter.ModelAdapter;
-import pl.lodz.p.interiordesignapp.barcode.BarCodeCaptureActivity;
-import pl.lodz.p.interiordesignapp.barcode.BarcodeTracker;
-import pl.lodz.p.interiordesignapp.fragment.BlankFragment;
-import pl.lodz.p.interiordesignapp.fragment.CategoryFragment;
-import pl.lodz.p.interiordesignapp.fragment.ModelSelectionFragment;
-import pl.lodz.p.interiordesignapp.fragment.RootFragment;
 import pl.lodz.p.interiordesignapp.model.ArFragmentManager;
-import pl.lodz.p.interiordesignapp.utils.AppConst;
-import pl.lodz.p.interiordesignapp.utils.HelperUtil;
-import com.google.android.gms.common.api.CommonStatusCodes;
 
 public class MainActivity extends FragmentActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -88,14 +49,13 @@ public class MainActivity extends FragmentActivity {
             @Override
             public void onPageScrollStateChanged(int i) {
                     ArFragmentManager.getInstance().getFragment().getView().bringToFront();
-                
+
             }
         });
         viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(viewPagerAdapter);
         ArFragmentManager.getInstance().setViewPager(viewPager);
-        ArFragmentManager.getInstance().setActivity(this);
-        //viewPager.setOffscreenPageLimit(viewPagerAdapter.getCount()); // IMPORTANT! WE CAN NOT PREVENT TO REINITIALIZE AR FRAGMENT
+        viewPager.setOffscreenPageLimit(viewPagerAdapter.getCount()); // IMPORTANT! WE CAN NOT PREVENT TO REINITIALIZE AR FRAGMENT
     }
 
     /**

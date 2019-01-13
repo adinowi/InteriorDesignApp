@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import pl.lodz.p.interiordesignapp.R;
-import pl.lodz.p.interiordesignapp.barcode.BarCodeCaptureFragment;
 import pl.lodz.p.interiordesignapp.model.ArFragmentManager;
 
 public class RootFragment extends Fragment {

@@ -28,11 +28,15 @@ public class DownloadTask extends AsyncTask<String, Integer, String> {
     private DesignObject designObject;
     private static final String JPEG_EXT = ".jpg";
     private static final String SFB_EXT = ".sfb";
+    private boolean isSub;
+    private String name;
 
-    public DownloadTask(Context context, ProgressDialog progressDialog, DesignObject designObject) {
+    public DownloadTask(Context context, ProgressDialog progressDialog, DesignObject designObject, boolean isSub, String name) {
         this.context = context;
         this.mProgressDialog = progressDialog;
         this.designObject = designObject;
+        this.isSub = isSub;
+        this.name = name;
     }
 
     @Override
@@ -47,16 +51,18 @@ public class DownloadTask extends AsyncTask<String, Integer, String> {
         HttpURLConnection connectionJPG = null;
         HttpURLConnection connectionSFB = null;
         try {
-            URL urlJPG = new URL(urls[0]);
+            if(!isSub) {
+                URL urlJPG = new URL(urls[0]);
+                connectionJPG = (HttpURLConnection) urlJPG.openConnection();
+                connectionJPG.connect();
+            }
             URL urlSFB = new URL(urls[1]);
-            connectionJPG = (HttpURLConnection) urlJPG.openConnection();
-            connectionJPG.connect();
             connectionSFB = (HttpURLConnection) urlSFB.openConnection();
             connectionSFB.connect();
 
             // expect HTTP 200 OK, so we don't mistakenly save error report
             // instead of the file
-            if (connectionJPG.getResponseCode() != HttpURLConnection.HTTP_OK) {
+            if (!isSub && connectionJPG.getResponseCode() != HttpURLConnection.HTTP_OK) {
                 return "Server returned HTTP " + connectionJPG.getResponseCode()
                         + " " + connectionJPG.getResponseMessage();
             }
@@ -68,13 +74,22 @@ public class DownloadTask extends AsyncTask<String, Integer, String> {
 
             // this will be useful to display download percentage
             // might be -1: server did not report the length
-            int filesLength = connectionJPG.getContentLength() + connectionSFB.getContentLength();
-            if(downloadFile(JPEG_EXT, connectionJPG, filesLength, 0) == null) {
-                return null;
+            int filesLength;
+            if(!isSub) {
+                filesLength = connectionJPG.getContentLength() + connectionSFB.getContentLength();
+                if(downloadFile(JPEG_EXT, connectionJPG, filesLength, 0) == null) {
+                    return null;
+                }
+                if(downloadFile(SFB_EXT, connectionSFB, filesLength, connectionJPG.getContentLength()) == null) {
+                    return null;
+                }
+            } else {
+                filesLength = connectionSFB.getContentLength();
+                if(downloadFile(SFB_EXT, connectionSFB, filesLength, 0) == null) {
+                    return null;
+                }
             }
-            if(downloadFile(SFB_EXT, connectionSFB, filesLength, connectionJPG.getContentLength()) == null) {
-                return null;
-            }
+
         } catch (Exception e) {
             return e.toString();
         } finally {
@@ -86,7 +101,7 @@ public class DownloadTask extends AsyncTask<String, Integer, String> {
             } catch (IOException ignored) {
             }
 
-            if (connectionJPG != null) {
+            if (!isSub && connectionJPG != null) {
                 connectionJPG.disconnect();
             }
             if (connectionSFB != null) {
@@ -100,9 +115,13 @@ public class DownloadTask extends AsyncTask<String, Integer, String> {
         InputStream input = null;
         OutputStream output = null;
         input = connection.getInputStream();
+        File file;
+        if(!isSub) {
+            file = new File( context.getFilesDir() + "/" + AppConst.MODELS_DIR + "/" + designObject.getCategory() + "/" + designObject.getName() + "/" + designObject.getColor() + "/" + designObject.getName() + extension);
+        } else {
+            file = new File( context.getFilesDir() + "/" + AppConst.MODELS_DIR + "/" + designObject.getCategory() + "/" + name + "/" + AppConst.SUB_MODELS_DIR + "/" + designObject.getColor() + "/" + designObject.getName() + extension);
+        }
 
-
-        File file = new File( context.getFilesDir() + "/" + AppConst.MODELS_DIR + "/" + designObject.getCategory() + "/" + designObject.getName() + extension);
         if(!file.getParentFile().exists()) {
             file.getParentFile().mkdirs();
         }
