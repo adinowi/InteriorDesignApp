@@ -1,27 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="120dp"
+    android:layout_width="140dp"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/colorPrimary">
     <Button
-        android:id="@+id/deleteButton"
-        android:layout_width="wrap_content"
+    android:id="@+id/deleteButton"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    android:background="@color/colorPrimary"
+    android:layout_marginTop="5dp"
+    android:layout_marginBottom="5dp"
+    android:textColor="#b32d00"
+
+    android:text="delete"/>
+    <Button
+        android:id="@+id/closeButton"
+        android:layout_width="40dp"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:background="@color/colorPrimary"
+        android:textColor="#b32d00"
+        android:layout_margin="5dp"
+        android:text="X"/>
+    <TextView
+        android:id="@+id/rotationXText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Rotation X"
+        android:textColor="#b32d00"
+        android:layout_margin="5dp"
         app:layout_constraintStart_toStartOf="parent"
-        android:text="delete"/>
+        app:layout_constraintTop_toBottomOf="@id/deleteButton"
+        />
     <SeekBar
         android:id="@+id/xRotation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/deleteButton"
+        android:thumbTint="#b32d00"
+        android:progressTint="#b32d00"
+        app:layout_constraintTop_toBottomOf="@id/rotationXText"
         app:layout_constraintStart_toStartOf="parent"/>
+    <TextView
+        android:id="@+id/rotationZText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Rotation Z"
+        android:layout_margin="5dp"
+        android:textColor="#b32d00"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/xRotation"
+        />
     <SeekBar
         android:id="@+id/zRotation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/xRotation"
+        android:thumbTint="#b32d00"
+        app:layout_constraintTop_toBottomOf="@id/rotationZText"
+        android:progressTint="#b32d00"
         app:layout_constraintStart_toStartOf="parent"/>
     <LinearLayout
         android:id="@+id/colorLayout"

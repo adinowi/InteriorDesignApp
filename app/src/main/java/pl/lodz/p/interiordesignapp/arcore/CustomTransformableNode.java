@@ -46,6 +46,7 @@ public class CustomTransformableNode extends TransformableNode {
 
     public CustomTransformableNode(Context context, TransformationSystem transformationSystem, DesignModel designModel) {
         super(transformationSystem);
+        getScaleController().setMinScale(0.1f);
         this.context = context;
         this.designModel = designModel;
         viewNode = new Node();
@@ -55,6 +56,10 @@ public class CustomTransformableNode extends TransformableNode {
             Button button = view.findViewById(R.id.deleteButton);
             button.setOnClickListener(unusedView -> {
                 getTransformableNode().getParent().removeChild(getTransformableNode());
+            });
+            Button closeButton = view.findViewById(R.id.closeButton);
+            closeButton.setOnClickListener(v2 -> {
+                viewNode.setRenderable(null);
             });
             SeekBar xRotation = view.findViewById(R.id.xRotation);
             xRotation.setMax(360);
