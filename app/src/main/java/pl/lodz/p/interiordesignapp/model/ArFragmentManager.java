@@ -5,14 +5,12 @@ import android.support.v4.view.ViewPager;
 
 public class ArFragmentManager {
     private static ArFragmentManager manager;
-    private String name;
     private DesignModel designModel;
     private ViewPager viewPager;
     private Fragment fragment;
 
 
     private ArFragmentManager() {
-        name = "models/wardrobe/drawer.sfb";
     }
 
     public static ArFragmentManager getInstance() {
@@ -20,14 +18,6 @@ public class ArFragmentManager {
             manager = new ArFragmentManager();
         }
         return manager;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public ViewPager getViewPager() {

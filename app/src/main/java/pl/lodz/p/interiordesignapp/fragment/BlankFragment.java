@@ -50,8 +50,6 @@ public class BlankFragment extends Fragment {
         View view = inflater.inflate(R.layout.blank_fragment, container, false);
         arFragmentManager = ArFragmentManager.getInstance();
         arFragment = (WritingArFragment) getChildFragmentManager().findFragmentById(R.id.ux_fragment);
-
-        setRenderable("table.sfb");
         arFragment.setOnTapArPlaneListener(
                 (HitResult hitResult, Plane plane, MotionEvent motionEvent) -> {
                     Anchor anchor = hitResult.createAnchor();
