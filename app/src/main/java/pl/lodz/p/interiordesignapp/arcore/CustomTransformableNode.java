@@ -41,7 +41,6 @@ public class CustomTransformableNode extends TransformableNode {
     private Node viewNode;
     private Renderable renderableView;
     private Node rotateNode;
-    private Renderable modelRenderable;
     private DesignModel designModel;
 
     public CustomTransformableNode(Context context, TransformationSystem transformationSystem, DesignModel designModel) {
@@ -172,7 +171,7 @@ public class CustomTransformableNode extends TransformableNode {
                 ModelRenderable.builder()
                         .setSource(context, Uri.fromFile(file))
                         .build()
-                        .thenAccept(renderable -> customSetRenderable(renderable))
+                        .thenAccept(renderable -> rotateNode.setRenderable(renderable))
                         .exceptionally((throwable -> {
                             Toast toast =
                                     Toast.makeText(context, "Unable to load andy renderable", Toast.LENGTH_LONG);
@@ -182,12 +181,4 @@ public class CustomTransformableNode extends TransformableNode {
                         }));
     }
 
-    private void customSetRenderable(Renderable modelRenderable) {
-        this.modelRenderable = modelRenderable;
-        CollisionShape collisionShape = modelRenderable.getCollisionShape();
-        Renderable renderable = modelRenderable.makeCopy();
-        renderable.setCollisionShape(null);
-        rotateNode.setRenderable(modelRenderable);
-        this.setCollisionShape(collisionShape);
-    }
 }
