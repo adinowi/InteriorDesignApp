@@ -73,11 +73,11 @@ public class PictureTaker {
                 Bitmap.Config.ARGB_8888);
 
         // Create a handler thread to offload the processing of the image.
-        final HandlerThread handlerThread = new HandlerThread("PixelCopier");
+        final HandlerThread handlerThread = new HandlerThread("ImageCopier");
         handlerThread.start();
         // Make the request to copy.
-        PixelCopy.request(sceneView, bitmap, (copyResult) -> {
-            if (copyResult == PixelCopy.SUCCESS) {
+        PixelCopy.request(sceneView, bitmap, (result) -> {
+            if (result == PixelCopy.SUCCESS) {
                 try {
                     saveBitmapToDisk(bitmap, filename);
                 } catch (IOException e) {
@@ -88,7 +88,7 @@ public class PictureTaker {
                 }
             } else {
                 Toast toast = Toast.makeText(context,
-                        "Failed to copyPixels: " + copyResult, Toast.LENGTH_LONG);
+                        "Failed to copyPixels: " + result, Toast.LENGTH_LONG);
                 toast.show();
             }
             handlerThread.quitSafely();

@@ -46,6 +46,7 @@ public class CustomTransformableNode extends TransformableNode {
     public CustomTransformableNode(Context context, TransformationSystem transformationSystem, DesignModel designModel) {
         super(transformationSystem);
         getScaleController().setMinScale(0.1f);
+        getScaleController().setMaxScale(4f);
         this.context = context;
         this.designModel = designModel;
         viewNode = new Node();

@@ -115,7 +115,7 @@ public class VideoRecorder {
         }
         videoPath =
                 new File(
-                        videoDirectory, videoBaseName + Long.toHexString(System.currentTimeMillis()) + ".png");
+                        videoDirectory, videoBaseName + Long.toHexString(System.currentTimeMillis()) + ".mp4");
         File dir = videoPath.getParentFile();
         if (!dir.exists()) {
             dir.mkdirs();
